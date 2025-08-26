@@ -37,6 +37,12 @@ class DispositivoService:
     def listar_dispositivo(self) -> List[Dispositivo]:
         return self.db.query(Dispositivo).all()
     
+    def ativar_dispositivo(self, id: int) -> bool:
+        dispositivo = self.buscar_dispositivo(id)
+        dispositivo.estado = True
+        self.db.commit(dispositivo)
+        self.db.refresh()
+        return True
 
 
     
