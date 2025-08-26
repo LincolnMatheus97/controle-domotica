@@ -1,0 +1,35 @@
+@startuml - Diagrama de Classe
+title Diagrama de Classe Diagnostico Domotica
+
+class Comodo {
+  + id: int
+  + nome: string
+}
+
+class Dispositivo {
+  + id: int
+  + nome: string
+  + estado: boolean (ligado/desligado)
+}
+
+class Cena {
+  + id: int
+  + nome: string
+  + ativada: boolean
+}
+
+class AcaoCena {
+  + id_cena: int
+  + id_dispositivo: int
+  + estado_alvo: boolean
+  + ordem: int
+  + intervalo: int
+}
+
+Comodo "1" -- "1..*" Dispositivo : contem >
+
+Cena "1" -- "1..*" AcaoCena : <<cria>>
+
+Dispositivo "1" -- "1..*" AcaoCena : <<controlado por>>
+
+@enduml
