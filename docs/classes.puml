@@ -1,41 +1,56 @@
-@startuml Diagrama de Classes - Controle de Domótica
+@startuml - Diagrama de Classe
+!theme plain
 
 class Comodo {
-    - id: int
-    - nome: String
-    
-    + listarDispositivos(): void
+  - id : int
+  - nome : string
+  --
+  + criar() : Comodo
+  + listar() : List<Comodo>
+  + atualizar(novoNome: string) : void
+  + excluir() : void
 }
 
 class Dispositivo {
-    - id: int
-    - nome: String
-    - estado: String
-
-    + ligar(): void
-    + desligar(): void
-    + getStatus(): void
-}
-
-class Acao {
-    - acao: String
-    - intervalo: int
+  - id : int
+  - nome : string
+  - estado : boolean
+  - comodo_id : int
+  --
+  + criar() : Dispositivo
+  + listarPorComodo(comodoId: int) : List<Dispositivo>
+  + atualizar(novoNome: string) : void
+  + ligar() : void
+  + desligar() : void
+  + excluir() : void
 }
 
 class Cena {
-    - id: int
-    - nome: String
-    - ativa: boolean
-    - acoes: list<Acao>
-
-    + executar(): void
-    + adicionarAcao(): void
-    + removerAcao(): void
+  - id : int
+  - nome : string
+  - ativa : boolean
+  --
+  + criar() : Cena
+  + listar() : List<Cena>
+  + atualizar(novoNome: string, ativa: boolean) : void
+  + excluir() : void
+  + executar() : void
+  + adicionarAcao(a: Acao) : void
+  + removerAcao(a: Acao) : void
 }
 
-' -- Relacionamentos -- '
-Comodo "1" -- "0..*" Dispositivo
-Cena "1" -- "0..*" Acao
-Acao "1" -- "1" Dispositivo: faz referencia a >
+class Acao {
+  - id : int
+  - ordem : int
+  - acao : string   // "ligar" ou "desligar"
+  - intervaloSegundos : int
+  - cena_id : int
+  - dispositivo_id : int
+  --
+  + executar() : void
+}
 
+Comodo "1" -- "1..*" Dispositivo : possui >
+Cena "1" -- "1..*" Acao : tem >
+Dispositivo "1" -- "1..*" Acao : é usado em >
 @enduml
