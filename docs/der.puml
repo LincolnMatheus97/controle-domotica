@@ -1,47 +1,34 @@
-@startuml Diagrama de Entidade e Relacionamento - Controle de Domótica
+@startuml - Diagrama de Entidade e Relacionamento
+!theme plain
 
-'-- Aparencia das chaves --'
-hide circle
-skinparam linetype ortho
-
-'-- Definições das Entidades/Tabelas --'
-
-entity "Comodo" {
-    *id: int <<PK>>
-    --
-    nome: varchar(100)
+entity "Comodo" as Comodo {
+  *id : int <<PK>>
+  nome : varchar
 }
 
-entity "Dispositivo" {
-    *id: int <<PK>>
-    --
-    nome: varchar(100)
-    estado: varchar(20)
-    ..
-    #comodo_id: int <<FK>>
+entity "Dispositivo" as Dispositivo {
+  *id : int <<PK>>
+  nome : varchar
+  estado : varchar  // "ligado" ou "desligado"
+  comodo_id : int <<FK>>
 }
 
-entity "Cena" {
-    *id: int <<PK>>
-    --
-    nome: varchar(100)
-    ativa: boolean
+entity "Cena" as Cena {
+  *id : int <<PK>>
+  nome : varchar
+  ativa : boolean
 }
 
-entity "Acao" {
-    *id: int <<PK>>
-    --
-    acao: varchar(20)
-    intervalo_segundos: int
-    ordem: int
-    ..
-    #cena_id: int <<FK>>
-    #dispositivo_id: int <<FK>>
+entity "Acao" as Acao {
+  *id : int <<PK>>
+  ordem : int
+  acao : varchar  // ligar ou desligar
+  intervalo_segundos : int
+  cena_id : int <<FK>>
+  dispositivo_id : int <<FK>>
 }
 
-' -- Relacionamentos das Entidades -- '
-Comodo ||--o{ Dispositivo
-Cena ||--o{ Acao
-Dispositivo }o--|| Acao
-
+Comodo ||--o{ Dispositivo : "possui"
+Cena ||--o{ Acao : "tem"
+Dispositivo ||--o{ Acao : "é usado em"
 @enduml
