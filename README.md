@@ -20,7 +20,7 @@ Aqui está o nosso checklist para acompanhar o andamento da atividade.
 - [x] Diagrama de Caso de Uso: Representar graficamente as interações e atores.
 - [x] Diagrama de Classes: Modelar as entidades `Comodo`, `Dispositivo` e `Cena`.
 - [x] Diagrama de Entidade e Relacionamento (DER): Projetar as tabelas do banco de dados (PostgreSQL).
-- [ ] Documentação de API (Endpoints): Descrever os endpoints da API REST (`GET`, `POST`, `PUT`, `DELETE`).
+- [x] Documentação de API (Endpoints): Descrever os endpoints da API REST (`GET`, `POST`, `PUT`, `DELETE`).
 - [ ] Mapa de Habilidades: Mapear o nivelamento técnico da equipe.
 
 ### Fase 2: Desenvolvimento do Backend (Python)
