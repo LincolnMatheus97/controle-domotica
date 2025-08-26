@@ -18,3 +18,34 @@ class CenaService:
         self.db.refresh(cena)
         return cena
     
+    def buscar_cena(self, id: int) -> Cena:
+        cena = self.db.query(Cena).filter(Cena.id == id).first()
+        if not cena:
+            raise ValueError("Cena não encontrado.")
+        return cena
+        
+    def atualizar_cena(self, id: int, nome: str) -> Cena:
+        cena = self.buscar_cena(id)
+        cena.nome = nome
+        self.db.commit()
+        self.db.refresh(cena)
+        return cena
+    
+    def deletar_cena(self, id: int) -> bool:
+        cena = self.buscar_cena(id)
+        self.db.delete(cena)
+        self.db.commit()  
+        return True
+    
+    def listar_cena(self) -> List[Cena]:
+        return self.db.query(Cena).all()
+    
+    def ativar_cena(self, id: int) -> bool:
+        cena = self.buscar_cena(id)
+        cena.ativo = True
+        self.db.commit(cena)
+        self.db.refresh()
+
+    # Faltam algumas coisas 
+
+    
