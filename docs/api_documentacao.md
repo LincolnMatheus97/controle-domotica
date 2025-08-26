@@ -221,10 +221,10 @@
   - **Status Code:** `201 Created`
   - **Body:** (Retorna a cena completa e atualizada)
 
-### 4. Atualizar uma ação de uma cena
+### 4. Atualizar uma cena
 - **Method:** `PUT`
-- **URL:** `/api/acoes/{id}`
-- **Parâmetros:** `id` (na URL) - O ID da ação a ser atualizada.
+- **URL:** `/api/cenas/{id}`
+- **Parâmetros:** `id` (na URL) - O ID da cena a ser atualizada.
 - **Corpo da Requisição:**
     ```json
     {

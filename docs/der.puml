@@ -9,7 +9,7 @@ entity "Comodo" as Comodo {
 entity "Dispositivo" as Dispositivo {
   *id : int <<PK>>
   nome : varchar
-  estado : varchar  // "ligado" ou "desligado"
+  estado : boolean  // "ligado" ou "desligado"
   comodo_id : int <<FK>>
 }
 
