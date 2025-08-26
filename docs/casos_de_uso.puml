@@ -1,0 +1,56 @@
+@startuml Diagrama de Caso de Uso - Domótica
+
+' -- Define o ator -- '
+actor "Usuário" as user
+
+' -- Define o retângulo que representa os limites do sistema  --'
+rectangle "Sistema de Controle de Domótica" {
+  
+    ' -- Agrupa os casos de uso por funcionalidade para organização -- '
+  package "Gerenciamento de Cômodos" {
+    usecase "Manter Cômodos" as UC1
+    note right of UC1
+      Inclui:
+      - Criar novo cômodo
+      - Visualizar todos os cômodos
+      - Alterar nome de cômodo
+      - Excluir cômodo
+    end note
+  }
+
+  package "Gerenciamento de Dispositivos" {
+    usecase "Manter Dispositivos" as UC2
+    usecase "Controlar Dispositivo" as UC3
+    
+    note right of UC2
+      Inclui:
+      - Adicionar novo dispositivo
+      - Visualizar dispositivos de um cômodo
+      - Editar nome de dispositivo
+      - Excluir dispositivo
+    end note
+  }
+
+  package "Gerenciamento de Cenas" {
+    usecase "Manter Cenas" as UC4
+    usecase "Executar Cena" as UC5
+
+    note right of UC4
+     Inclui:
+     - Criar nova cena
+     - Visualizar as cenas criadas
+     - Editar cena (nome, status)
+     - Adicionar/Remover ações
+     - Excluir cena
+    end note
+  }
+  
+  user -- UC1
+  user -- UC2
+  user -- UC3
+  user -- UC4
+  user -- UC5
+
+}
+
+@enduml

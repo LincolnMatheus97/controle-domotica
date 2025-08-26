@@ -1,0 +1,47 @@
+@startuml Diagrama de Entidade e Relacionamento - Controle de Domótica
+
+'-- Aparencia das chaves --'
+hide circle
+skinparam linetype ortho
+
+'-- Definições das Entidades/Tabelas --'
+
+entity "Comodo" {
+    *id: int <<PK>>
+    --
+    nome: varchar(100)
+}
+
+entity "Dispositivo" {
+    *id: int <<PK>>
+    --
+    nome: varchar(100)
+    estado: varchar(20)
+    ..
+    #comodo_id: int <<FK>>
+}
+
+entity "Cena" {
+    *id: int <<PK>>
+    --
+    nome: varchar(100)
+    ativa: boolean
+}
+
+entity "Acao" {
+    *id: int <<PK>>
+    --
+    acao: varchar(20)
+    intervalo_segundos: int
+    ordem: int
+    ..
+    #cena_id: int <<FK>>
+    #dispositivo_id: int <<FK>>
+}
+
+' -- Relacionamentos das Entidades -- '
+Comodo ||--o{ Dispositivo
+Cena ||--o{ Acao
+Dispositivo }o--|| Acao
+
+@enduml
