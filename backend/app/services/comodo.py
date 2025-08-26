@@ -9,11 +9,11 @@ class ComodoService:
     def __init__(self,db: Session):
         self.db = db
 
-    def criar_comodo(self, nome: str):
+    def criar_comodo(self, nome: str) -> Comodo:
         comodo = Comodo(nome=nome)
         self.db.add(comodo)
         self.db.commit()
-        self.db.flush(comodo)
+        self.db.refresh(comodo)
         return comodo
         
         
