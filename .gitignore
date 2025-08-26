@@ -1,2 +1,9 @@
 .env
 /backend/venv/
+*.db
+test.db
+domotica.db
+__pycache__/
+*.pyc
+venv/
+.vscode/
