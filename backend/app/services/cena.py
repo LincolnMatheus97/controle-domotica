@@ -45,6 +45,7 @@ class CenaService:
         cena.ativo = True
         self.db.commit(cena)
         self.db.refresh()
+        return True
 
     # Faltam algumas coisas 
 
