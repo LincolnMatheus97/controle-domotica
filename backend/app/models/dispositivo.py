@@ -1,8 +1,18 @@
-class Dispositivo:
-    """Classe que representa um dispositivo."""
-    def __init__(self, Nome: str, idDispositivo: int, Estado: bool = False, idComodo: int = None):
-        self.nome = Nome
-        self.id = idDispositivo
-        self.estado = Estado
-        self.id_comodo = idComodo
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
+from .base import Base
+
+class Dispositivo(Base):
+    __tablename__ = "dispositivos"
     
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String(100), nullable=False)
+    estado = Column(Boolean, default=False)
+    id_comodo = Column(Integer, ForeignKey("comodos.id"), nullable=False)
+    
+    # Relacionamentos
+    comodo = relationship("Comodo", back_populates="dispositivos")
+    acoes = relationship("Acao", back_populates="dispositivo", cascade="all, delete-orphan")
+    
+    def __repr__(self):
+        return f"<Dispositivo(id={self.id}, nome='{self.nome}', estado={self.estado})>"
