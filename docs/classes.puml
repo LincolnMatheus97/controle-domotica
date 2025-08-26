@@ -1,0 +1,41 @@
+@startuml Diagrama de Classes - Controle de Domótica
+
+class Comodo {
+    - id: int
+    - nome: String
+    
+    + listarDispositivos(): void
+}
+
+class Dispositivo {
+    - id: int
+    - nome: String
+    - estado: String
+
+    + ligar(): void
+    + desligar(): void
+    + getStatus(): void
+}
+
+class Acao {
+    - acao: String
+    - intervalo: int
+}
+
+class Cena {
+    - id: int
+    - nome: String
+    - ativa: boolean
+    - acoes: list<Acao>
+
+    + executar(): void
+    + adicionarAcao(): void
+    + removerAcao(): void
+}
+
+' -- Relacionamentos -- '
+Comodo "1" -- "0..*" Dispositivo
+Cena "1" -- "0..*" Acao
+Acao "1" -- "1" Dispositivo: faz referencia a >
+
+@enduml
