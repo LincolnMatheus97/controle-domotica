@@ -78,8 +78,8 @@
   - **Body:**
     ```json
     [
-      { "id": 1, "nome": "Lâmpada Principal", "estado": "desligado", "comodo_id": 1 },
-      { "id": 2, "nome": "Ventilador", "estado": "ligado", "comodo_id": 1 }
+      { "id": 1, "nome": "Lâmpada Principal", "estado": "false", "comodo_id": 1 },
+      { "id": 2, "nome": "Ventilador", "estado": "true", "comodo_id": 1 }
     ]
     ```
 
@@ -91,7 +91,7 @@
     ```json
     {
       "nome": "Tomada Inteligente",
-      "estado": "desligado"
+      "estado": "false"
     }
     ```
 - **Resposta (Sucesso):**
@@ -101,7 +101,7 @@
     {
       "id": 3,
       "nome": "Tomada Inteligente",
-      "estado": "desligado",
+      "estado": "false",
       "comodo_id": 1
     }
     ```
@@ -123,7 +123,7 @@
     {
       "id": 2,
       "nome": "Ventilador de Teto",
-      "estado": "ligado",
+      "estado": "true",
       "comodo_id": 1
     }
     ```
@@ -135,7 +135,7 @@
 - **Corpo da Requisição:**
     ```json
     {
-      "estado": "desligado"
+      "estado": "false"
     }
     ```
 - **Resposta (Sucesso):**
@@ -145,7 +145,7 @@
     {
       "id": 2,
       "nome": "Ventilador de Teto",
-      "estado": "desligado",
+      "estado": "false",
       "comodo_id": 1
     }
     ```
@@ -221,14 +221,42 @@
   - **Status Code:** `201 Created`
   - **Body:** (Retorna a cena completa e atualizada)
 
-### 4. Excluir uma ação de uma cena
+### 4. Atualizar uma ação de uma cena
+- **Method:** `PUT`
+- **URL:** `/api/acoes/{id}`
+- **Parâmetros:** `id` (na URL) - O ID da ação a ser atualizada.
+- **Corpo da Requisição:**
+    ```json
+    {
+      "nome": "Modo Cinema 2.0",
+      "ativa": false
+    }
+    ```
+- **Resposta (Sucesso):**
+  - **Status Code:** `200 OK`
+  - **Body:**
+    ```json
+    {
+      "id": 1,
+      "nome": "Modo Cinema 2.0",
+      "ativa": false,
+      "acoes": [ ... ]
+    }
+    ```
+
+### 5. Excluir uma ação de uma cena
 - **Method:** `DELETE`
 - **URL:** `/api/acoes/{id}`
 - **Parâmetros:** `id` (na URL) - O ID da ação a ser excluída.
 - **Resposta (Sucesso):**
   - **Status Code:** `204 No Content`
-
-### 5. Executar uma cena
+  - **Body:** 
+    ```json
+    {
+      "message": "Ação excluída com sucesso."
+    }
+    ```
+### 6. Executar uma cena
 - **Method:** `POST`
 - **URL:** `/api/cenas/{id}/executar`
 - **Parâmetros:** `id` (na URL) - O ID da cena a ser executada.
