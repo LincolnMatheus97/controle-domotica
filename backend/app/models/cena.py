@@ -7,9 +7,9 @@ class Cena(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String(100), nullable=False)
-    ativo = Column(Boolean, default=True)
+    ativa = Column(Boolean, default=True)
 
     acoes = relationship("Acao", back_populates="cena", cascade="all, delete-orphan")
     
     def __repr__(self):
-        return f"<Cena(id={self.id}, nome='{self.nome}', ativo={self.ativo})>"
+        return f"<Cena(id={self.id}, nome='{self.nome}', ativa={self.ativa})>"
