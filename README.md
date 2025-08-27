@@ -24,9 +24,9 @@ Aqui está o nosso checklist para acompanhar o andamento da atividade.
 - [ ] Mapa de Habilidades: Mapear o nivelamento técnico da equipe.
 
 ### Fase 2: Desenvolvimento do Backend (Python)
-- [ ] Configuração do ambiente de desenvolvimento Python.
+- [x] Configuração do ambiente de desenvolvimento Python.
 - [ ] Conexão com o banco de dados PostgreSQL.
-- [ ] Criação dos modelos/tabelas baseados no DER.
+- [x] Criação dos modelos/tabelas baseados no DER.
 - [ ] Implementação dos endpoints da API para gerenciar `Comodos`.
 - [ ] Implementação dos endpoints da API para gerenciar `Dispositivos`.
 - [ ] Implementação dos endpoints da API para gerenciar `Cenas` e suas ações.
