@@ -9,8 +9,8 @@ class Acao(Base):
     acao = Column(String(50), nullable=False)  # Ex: "ligar", "desligar", "dimmer_50"
     intervalo_segundos = Column(Integer, nullable=True)  # Delay antes de executar
     ordem = Column(Integer, nullable=False)  # Ordem de execução na cena
-    id_dispositivo = Column(Integer, ForeignKey("dispositivos.id"), nullable=False)
-    id_cena = Column(Integer, ForeignKey("cenas.id"), nullable=False)
+    dispositivo_id = Column(Integer, ForeignKey("dispositivos.id"), nullable=False)
+    cena_id = Column(Integer, ForeignKey("cenas.id"), nullable=False)
     
     # Relacionamentos
     dispositivo = relationship("Dispositivo", back_populates="acoes")
