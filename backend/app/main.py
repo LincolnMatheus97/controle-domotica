@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.database import create_tables
 from app.api.endpoints import comodo_router, dispositivo_router, cena_router, acao_router
+from app.database.database import init_db
 
 # Criar a aplicação FastAPI
 app = FastAPI()
@@ -13,8 +13,9 @@ app.include_router(acao_router, prefix="/api", tags=["acoes"])
 
 # Criar as tabelas no startup
 @app.on_event("startup")
-def startup():
-    create_tables()
+def startup_event():
+    init_db()
+
 
 # Endpoint básico
 @app.get("/")
