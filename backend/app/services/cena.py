@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.cena import Cena
 from app.models.acao import Acao
-from typing import List, Optional
-import time
+from typing import List
 
 class CenaService:
     """Service para gerenciar a lógica de negócio das cenas."""
@@ -50,6 +49,5 @@ class CenaService:
         self.db.refresh()
         return True
 
-    # Faltam algumas coisas 
 
     
