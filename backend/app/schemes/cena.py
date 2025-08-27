@@ -4,14 +4,14 @@ from typing import Optional
 # Schemas para Cena
 class CenaBase(BaseModel):
     nome: str
-    ativo: bool = True
+    ativa: bool = True
 
 class CenaCreate(CenaBase):
     pass
 
 class CenaUpdate(BaseModel):
     nome: Optional[str] = None
-    ativo: Optional[bool] = None
+    ativa: Optional[bool] = None
 
 class CenaResponse(CenaBase):
     id: int
