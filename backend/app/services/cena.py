@@ -43,9 +43,9 @@ class CenaService:
     def listar_cena(self) -> List[Cena]:
         return self.db.query(Cena).all()
     
-    def ativar_cena(self, id: int) -> bool:
+    def inverter_ativo(self, id: int) -> bool:
         cena = self.buscar_cena(id)
-        cena.ativo = True
+        cena.ativo = not cena.ativo
         self.db.commit(cena)
         self.db.refresh()
         return True
