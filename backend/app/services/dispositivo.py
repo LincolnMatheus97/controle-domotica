@@ -3,17 +3,21 @@ from app.models.dispositivo import Dispositivo
 from typing import List
 
 class DispositivoService:
-    """Classe que representa um dispositivo."""
+    """Service para gerenciar dispositivos."""
 
     def __init__(self, db: Session):
         self.db = db
 
-    def criar_dispositivo(self, Nome: str, Estado: bool = False, idComodo: int = None) -> Dispositivo:
-        dispositivo = Dispositivo(nome=Nome, estado=Estado, id_comodo=idComodo)
+    def criar_dispositivo(self, nome: str, estado: bool = False, comodo_id: int = None) -> Dispositivo:
+        dispositivo = Dispositivo(nome=nome, estado=estado, comodo_id=comodo_id)
         self.db.add(dispositivo)
         self.db.commit()
         self.db.refresh(dispositivo)
         return dispositivo
+    
+    def criar_dispositivo_no_comodo(self, comodo_id: int, nome: str, estado: bool = False) -> Dispositivo:
+        """Método específico para endpoint /comodos/{comodo_id}/dispositivos"""
+        return self.criar_dispositivo(nome=nome, estado=estado, comodo_id=comodo_id)
     
     def buscar_dispositivo(self, id: int) -> Dispositivo:
         dispositivo = self.db.query(Dispositivo).filter(Dispositivo.id == id).first()
@@ -21,12 +25,26 @@ class DispositivoService:
             raise ValueError("Dispositivo não encontrado.")
         return dispositivo
         
-    def atualizar_dispositivo(self, id: int, nome: str) -> Dispositivo:
+    def atualizar_dispositivo(self, id: int, nome: str = None, estado: bool = None, comodo_id: int = None) -> Dispositivo:
         dispositivo = self.buscar_dispositivo(id)
-        dispositivo.nome = nome
+        if nome is not None:
+            dispositivo.nome = nome
+        if estado is not None:
+            dispositivo.estado = estado
+        if comodo_id is not None:
+            dispositivo.comodo_id = comodo_id
         self.db.commit()
         self.db.refresh(dispositivo)
         return dispositivo
+    
+    def listar_dispositivos_por_comodo(self, comodo_id: int) -> List[Dispositivo]:
+        return self.db.query(Dispositivo).filter(Dispositivo.comodo_id == comodo_id).all()
+    
+    def deletar_dispositivo(self, id: int) -> bool:
+        dispositivo = self.buscar_dispositivo(id)
+        self.db.delete(dispositivo)
+        self.db.commit()
+        return True
     
     def deletar_dispositivo(self, id: int) -> bool:
         dispositivo = self.buscar_dispositivo(id)
