@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ...database import get_db
-from app.services.cena import AcaoService
+from app.services.acao import AcaoService
 from app.schemes.acao import AcaoCreate, AcaoCreateInScene, AcaoUpdate, AcaoResponse
 
 router = APIRouter()
