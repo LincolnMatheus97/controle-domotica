@@ -10,3 +10,9 @@ router = APIRouter()
 def listar_dispositivos(db: Session = Depends(get_db)):
     service = DispositivoService(db)
     return service.listar_dispositivos()
+
+@router.post("/dispositivos", response_model=DispositivoResponse, status_code=201)
+def criar_dispositivo(dispositivo: DispositivoCreate, db: Session = Depends(get_db)):
+    service = DispositivoService(db)
+    return service.criar_dispositivo(dispositivo.nome, dispositivo.estado, dispositivo.comodo_id)
+
