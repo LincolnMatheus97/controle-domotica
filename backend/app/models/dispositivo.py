@@ -8,7 +8,7 @@ class Dispositivo(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String(100), nullable=False)
     estado = Column(Boolean, default=False)
-    id_comodo = Column(Integer, ForeignKey("comodos.id"), nullable=False)
+    comodo_id = Column(Integer, ForeignKey("comodos.id"), nullable=False)
     
     # Relacionamentos
     comodo = relationship("Comodo", back_populates="dispositivos")
