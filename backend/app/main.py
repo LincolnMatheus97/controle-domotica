@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from app.api.endpoints import comodo_router, dispositivo_router, cena_router, acao_router
 from app.database.database import init_db
 import uvicorn
