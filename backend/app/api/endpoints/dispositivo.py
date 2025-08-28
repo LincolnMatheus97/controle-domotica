@@ -21,6 +21,7 @@ def criar_dispositivo_no_comodo(comodo_id: int, dispositivo: DispositivoCreateIn
     service = DispositivoService(db)
     return service.criar_dispositivo_no_comodo(comodo_id, dispositivo.nome, dispositivo.estado)
 
+#aqui
 @router.get("/dispositivos/{dispositivo_id}", response_model=DispositivoResponse)
 def buscar_dispositivo(dispositivo_id: int, db: Session = Depends(get_db)):
     service = DispositivoService(db)

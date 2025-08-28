@@ -19,14 +19,20 @@ class DispositivoService:
         """Método específico para endpoint /comodos/{comodo_id}/dispositivos"""
         return self.criar_dispositivo(nome=nome, estado=estado, comodo_id=comodo_id)
     
-    def buscar_dispositivo(self, id: int) -> Dispositivo:
+    def buscar_dispositivo_por_id(self, id: int) -> Dispositivo:
         dispositivo = self.db.query(Dispositivo).filter(Dispositivo.id == id).first()
+        if not dispositivo:
+            raise ValueError("Dispositivo não encontrado.")
+        return dispositivo
+    
+    def buscar_dispositivo_por_nome(self, nome: str) -> Dispositivo:
+        dispositivo = self.db.query(Dispositivo).filter(Dispositivo.nome == nome).first()
         if not dispositivo:
             raise ValueError("Dispositivo não encontrado.")
         return dispositivo
         
     def atualizar_dispositivo(self, id: int, nome: str = None, estado: bool = None, comodo_id: int = None) -> Dispositivo:
-        dispositivo = self.buscar_dispositivo(id)
+        dispositivo = self.buscar_dispositivo_por_id(id)
         if nome is not None:
             dispositivo.nome = nome
         if estado is not None:
