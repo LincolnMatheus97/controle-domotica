@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/cenas", response_model=list[CenaResponse])
 def listar_cenas(db: Session = Depends(get_db)):
     service = CenaService(db)
-    return service.listar_cenas()
+    return service.listar_cena()
 
 @router.post("/cenas", response_model=CenaResponse, status_code=201)
 def criar_cena(cena: CenaCreate, db: Session = Depends(get_db)):
