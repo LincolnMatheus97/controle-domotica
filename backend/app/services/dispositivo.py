@@ -47,25 +47,19 @@ class DispositivoService:
         return self.db.query(Dispositivo).filter(Dispositivo.comodo_id == comodo_id).all()
     
     def deletar_dispositivo(self, id: int) -> bool:
-        dispositivo = self.buscar_dispositivo(id)
+        dispositivo = self.buscar_dispositivo_por_id(id)
         self.db.delete(dispositivo)
         self.db.commit()
-        return True
-    
-    def deletar_dispositivo(self, id: int) -> bool:
-        dispositivo = self.buscar_dispositivo(id)
-        self.db.delete(dispositivo)
-        self.db.commit()  
         return True
     
     def listar_dispositivo(self) -> List[Dispositivo]:
         return self.db.query(Dispositivo).all()
     
     def ativar_dispositivo(self, id: int) -> bool:
-        dispositivo = self.buscar_dispositivo(id)
+        dispositivo = self.buscar_dispositivo_por_id(id)
         dispositivo.estado = True
-        self.db.commit(dispositivo)
-        self.db.refresh()
+        self.db.commit()
+        self.db.refresh(dispositivo)
         return True
 
 
