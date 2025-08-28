@@ -146,7 +146,7 @@ INFO:     Uvicorn running on http://127.0.0.1:8000
 ```json
 {
   "id": 1,
-  "acao": "ligar",
+  "acao": true,
   "intervalo_segundos": 5,
   "ordem": 1,
   "dispositivo_id": 1,
