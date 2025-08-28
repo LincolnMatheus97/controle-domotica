@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ...database import get_db
 from app.services.cena import CenaService
-from app.schemes.cena import CenaCreate, CenaUpdate, CenaResponse
+from app.schemes.cena import CenaCreate, CenaUpdate, CenaResponse, CenaExecucaoResponse
 
 router = APIRouter()
 
@@ -36,11 +36,22 @@ def deletar_cena(cena_id: int, db: Session = Depends(get_db)):
         return {"message": "Cena deletada com sucesso"}
     raise HTTPException(status_code=404, detail="Cena não encontrada")
 
+
 @router.put("/cenas/{cena_id}/inverter", response_model=CenaResponse)
 def inverter_ativo_cena(cena_id: int, db: Session = Depends(get_db)):
     service = CenaService(db)
     try:
-        service.inverter_ativo(cena_id)
+        service.inverter_ativo(cena_id) # retorna o estado da cena que foi invertido
         return service.buscar_cena(cena_id)  
     except ValueError:
         raise HTTPException(status_code=404, detail="Cena não encontrada")
+
+# Endpoint para executar uma cena
+@router.post("/cenas/{cena_id}/executar", response_model=CenaExecucaoResponse)
+def executar_cena(cena_id: int, db: Session = Depends(get_db)):
+    service = CenaService(db)
+    try:
+        resultado = service.executar_cena(cena_id)
+        return resultado
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
