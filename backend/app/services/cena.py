@@ -46,7 +46,7 @@ class CenaService:
     
     def inverter_ativo(self, id: int) -> bool:
         cena = self.buscar_cena(id)
-        cena.ativo = not cena.ativo
+        cena.ativa = not cena.ativa
         self.db.commit()
         self.db.refresh(cena)
         return True
@@ -55,12 +55,12 @@ class CenaService:
         """Executa uma cena, processando todas as suas ações em ordem"""
         cena = self.buscar_cena(id)
         
-        if not cena.ativo:
+        if not cena.ativa:
             raise ValueError("Cena não está ativa")
         
         # Buscar todas as ações da cena ordenadas por ordem
         acoes = self.db.query(Acao).filter(
-            Acao.id_cena == id
+            Acao.cena_id == id
         ).order_by(Acao.ordem).all()
         
         if not acoes:
@@ -72,7 +72,7 @@ class CenaService:
         for acao in acoes:
             # Buscar o dispositivo
             dispositivo = self.db.query(Dispositivo).filter(
-                Dispositivo.id == acao.id_dispositivo
+                Dispositivo.id == acao.dispositivo_id
             ).first()
             
             if not dispositivo:
