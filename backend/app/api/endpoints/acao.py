@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/acoes", response_model=list[AcaoResponse])
 def listar_acoes(db: Session = Depends(get_db)):
     service = AcaoService(db)
-    return service.listar_acoes()
+    return service.listar_acao()
 
 @router.post("/acoes", response_model=AcaoResponse, status_code=201)
 def criar_acao(acao: AcaoCreate, db: Session = Depends(get_db)):

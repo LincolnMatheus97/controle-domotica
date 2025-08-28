@@ -6,7 +6,7 @@ class Acao(Base):
     __tablename__ = "acoes"
     
     id = Column(Integer, primary_key=True, index=True)
-    acao = Column(String(50), nullable=False)  # Ex: "ligar", "desligar", "dimmer_50"
+    acao = Column(String(50), nullable=False)  # "ligar", "desligar"
     intervalo_segundos = Column(Integer, nullable=True)  # Delay antes de executar
     ordem = Column(Integer, nullable=False)  # Ordem de execução na cena
     dispositivo_id = Column(Integer, ForeignKey("dispositivos.id"), nullable=False)

@@ -6,7 +6,7 @@ class Cena(Base):
     __tablename__ = "cenas"
     
     id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String(100), nullable=False)
+    nome = Column(String(100), nullable=False, unique=True)
     ativa = Column(Boolean, default=True)
 
     acoes = relationship("Acao", back_populates="cena", cascade="all, delete-orphan")
