@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from .base import Base
 
@@ -6,7 +6,7 @@ class Acao(Base):
     __tablename__ = "acoes"
     
     id = Column(Integer, primary_key=True, index=True)
-    acao = Column(String(50), nullable=False)  # "ligar", "desligar"
+    acao = Column(Boolean, nullable=False)  # "ligar" -> true, "desligar" -> false
     intervalo_segundos = Column(Integer, nullable=True)  # Delay antes de executar
     ordem = Column(Integer, nullable=False)  # Ordem de execução na cena
     dispositivo_id = Column(Integer, ForeignKey("dispositivos.id"), nullable=False)

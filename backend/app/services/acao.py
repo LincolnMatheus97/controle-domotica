@@ -8,7 +8,7 @@ class AcaoService:
     def __init__(self, db: Session):
         self.db = db
 
-    def criar_acao(self, acao: str, dispositivo_id: int, cena_id: int, ordem: int, intervalo_segundos: int = None) -> Acao:
+    def criar_acao(self, acao: bool, dispositivo_id: int, cena_id: int, ordem: int, intervalo_segundos: int = None) -> Acao:
         nova_acao = Acao(
             acao=acao,
             ordem=ordem,
@@ -21,7 +21,7 @@ class AcaoService:
         self.db.refresh(nova_acao)
         return nova_acao
     
-    def criar_acao_na_cena(self, cena_id: int, dispositivo_id: int, acao: str, ordem: int, intervalo_segundos: int = None) -> Acao:
+    def criar_acao_na_cena(self, cena_id: int, dispositivo_id: int, acao: bool, ordem: int, intervalo_segundos: int = None) -> Acao:
         """Método específico para endpoint /cenas/{cena_id}/acoes"""
         return self.criar_acao(
             acao=acao,
@@ -37,7 +37,7 @@ class AcaoService:
             raise ValueError("Ação não encontrada.")
         return acao
         
-    def atualizar_acao(self, id: int, acao: str = None, dispositivo_id: int = None, 
+    def atualizar_acao(self, id: int, acao: bool = None, dispositivo_id: int = None, 
                       cena_id: int = None, ordem: int = None, intervalo_segundos: int = None) -> Acao:
         acao_obj = self.buscar_acao(id)
         if acao is not None:
@@ -61,12 +61,6 @@ class AcaoService:
         acao = self.buscar_acao(id)
         self.db.delete(acao)
         self.db.commit()
-        return True
-    
-    def deletar_acao(self, id: int) -> bool:
-        acao = self.buscar_acao(id)
-        self.db.delete(acao)
-        self.db.commit()  
         return True
     
     def listar_acao(self) -> List[Acao]:
