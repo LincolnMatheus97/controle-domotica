@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/dispositivos", response_model=list[DispositivoResponse])
 def listar_dispositivos(db: Session = Depends(get_db)):
     service = DispositivoService(db)
-    return service.listar_dispositivos()
+    return service.listar_dispositivo()
 
 @router.post("/dispositivos", response_model=DispositivoResponse, status_code=201)
 def criar_dispositivo(dispositivo: DispositivoCreate, db: Session = Depends(get_db)):
