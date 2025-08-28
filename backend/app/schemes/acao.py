@@ -3,7 +3,7 @@ from typing import Optional
 
 # Schemas para Acao
 class AcaoBase(BaseModel):
-    acao: str
+    acao: bool
     intervalo_segundos: Optional[int] = None
     ordem: int
     dispositivo_id: int
@@ -12,7 +12,7 @@ class AcaoBase(BaseModel):
 # Para endpoint: POST /cenas/{cena_id}/acoes
 class AcaoCreateInScene(BaseModel):
     dispositivo_id: int
-    acao: str
+    acao: bool
     intervalo_segundos: Optional[int] = None
     ordem: int
 
@@ -21,7 +21,7 @@ class AcaoCreate(AcaoBase):
     pass
 
 class AcaoUpdate(BaseModel):
-    acao: Optional[str] = None
+    acao: Optional[bool] = None
     intervalo_segundos: Optional[int] = None
     ordem: Optional[int] = None
     dispositivo_id: Optional[int] = None

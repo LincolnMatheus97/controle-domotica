@@ -79,9 +79,9 @@ class CenaService:
                 continue  
             
             # Executar a ação
-            if acao.acao == "ligar":
+            if acao.acao == True:
                 dispositivo.estado = True
-            elif acao.acao == "desligar":
+            elif acao.acao == False:
                 dispositivo.estado = False
             
             self.db.commit()

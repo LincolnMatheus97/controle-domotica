@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 
 # Schemas para Cena
 class CenaBase(BaseModel):
@@ -18,7 +18,7 @@ class CenaExecucaoResponse(BaseModel):
     cena_executada: str
     acoes_executadas: int
     dispositivos_afetados: List[str]
-    detalhes: List[Dict[str, str]]
+    detalhes: List[Dict[str, Any]]
 
 class CenaResponse(CenaBase):
     id: int
