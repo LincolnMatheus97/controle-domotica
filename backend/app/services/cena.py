@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from app.models.cena import Cena
 from app.models.acao import Acao
-from typing import List
+from app.models.dispositivo import Dispositivo
+from typing import List, Dict
+import time
 
 class CenaService:
     """Service para gerenciar a lógica de negócio das cenas."""
@@ -45,9 +47,64 @@ class CenaService:
     def inverter_ativo(self, id: int) -> bool:
         cena = self.buscar_cena(id)
         cena.ativo = not cena.ativo
-        self.db.commit(cena)
-        self.db.refresh()
+        self.db.commit()
+        self.db.refresh(cena)
         return True
+    
+    def executar_cena(self, id: int) -> Dict:
+        """Executa uma cena, processando todas as suas ações em ordem"""
+        cena = self.buscar_cena(id)
+        
+        if not cena.ativo:
+            raise ValueError("Cena não está ativa")
+        
+        # Buscar todas as ações da cena ordenadas por ordem
+        acoes = self.db.query(Acao).filter(
+            Acao.id_cena == id
+        ).order_by(Acao.ordem).all()
+        
+        if not acoes:
+            raise ValueError("Cena não possui ações cadastradas")
+        
+        acoes_executadas = []
+        dispositivos_afetados = []
+        
+        for acao in acoes:
+            # Buscar o dispositivo
+            dispositivo = self.db.query(Dispositivo).filter(
+                Dispositivo.id == acao.id_dispositivo
+            ).first()
+            
+            if not dispositivo:
+                continue  
+            
+            # Executar a ação
+            if acao.acao == "ligar":
+                dispositivo.estado = True
+            elif acao.acao == "desligar":
+                dispositivo.estado = False
+            
+            self.db.commit()
+            
+            acoes_executadas.append({
+                "acao": acao.acao,
+                "dispositivo": dispositivo.nome
+            })
+            
+            if dispositivo.nome not in dispositivos_afetados:
+                dispositivos_afetados.append(dispositivo.nome)
+            
+            # Aguardar intervalo se especificado
+            if acao.intervalo_segundos:
+                time.sleep(acao.intervalo_segundos)
+        
+        return {
+            "sucesso": True,
+            "cena_executada": cena.nome,
+            "acoes_executadas": len(acoes_executadas),
+            "dispositivos_afetados": dispositivos_afetados,
+            "detalhes": acoes_executadas
+        }
 
 
     
