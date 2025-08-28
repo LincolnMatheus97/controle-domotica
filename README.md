@@ -27,10 +27,11 @@ Aqui está o nosso checklist para acompanhar o andamento da atividade.
 - [x] Configuração do ambiente de desenvolvimento Python.
 - [ ] Conexão com o banco de dados PostgreSQL.
 - [x] Criação dos modelos/tabelas baseados no DER.
-- [ ] Implementação dos endpoints da API para gerenciar `Comodos`.
-- [ ] Implementação dos endpoints da API para gerenciar `Dispositivos`.
-- [ ] Implementação dos endpoints da API para gerenciar `Cenas` e suas ações.
-- [ ] Implementação da lógica para "executar" uma cena.
+- [X] Implementação dos endpoints da API para gerenciar `Comodos`.
+- [X] Implementação dos endpoints da API para gerenciar `Dispositivos`.
+- [X] Implementação dos endpoints da API para gerenciar `Cenas` e suas ações.
+- [X] Implementação dos endpoints da API para gerenciar `Açoes`.
+- [X] Implementação da lógica para "executar" uma cena.
 
 ### Fase 3: Desenvolvimento do Frontend (HTML, CSS, JS)
 - [ ] Estrutura básica do HTML e estilização com CSS.
