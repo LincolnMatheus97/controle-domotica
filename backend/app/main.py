@@ -1,16 +1,12 @@
 from fastapi import FastAPI
-from fastapi.lifecycle import Lifespan
 from app.api.endpoints import comodo_router, dispositivo_router, cena_router, acao_router
 from app.database.database import init_db
 import uvicorn
 
-def lifespan(app: FastAPI) -> Lifespan:
-    async def startup():
-        init_db()  
-    async def shutdown():
-        pass  
-    return Lifespan(on_startup=[startup], on_shutdown=[shutdown])
-
+async def lifespan(app: FastAPI):
+    init_db()  
+    yield  # Startup concluído
+    
 
 # Criar a aplicação FastAPI
 app = FastAPI(
