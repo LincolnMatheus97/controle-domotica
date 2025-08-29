@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Domótica</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div id="notificacao-container"></div>
+    <header>
+        <h1>Controle de Domótica</h1>
+    </header>
+
+    <main>
+        <section id="comodos-section">
+            <h2>Cômodos</h2>
+            <div id="comodos-list">
+
+            </div>
+            <div class="form-container">
+                <input type="text" id="novo-comodo-nome" placeholder="Nome do novo cômodo">
+                <button id="btn-add-comodo" class="btn btn-primary">Adicionar Cômodo</button>
+            </div>
+        </section>
+        
+        <section id="dispositivos-section" class="hidden">
+            <h2 id="dispositivos-title">Dispositivos em...</h2>
+            <div id="dispositivos-list">
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="confirm-modal-overlay" class="hidden">
+        <div id="confirm-modal">
+            <h2>Confirmação</h2>
+            <p id="modal-message">Você tem certeza?</p>
+            <div class="modal-actions">
+                <button id="btn-modal-cancel" class="btn btn-secondary">Cancelar</button>
+                <button id="btn-modal-confirm" class="btn btn-danger">Confirmar Exclusão</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
