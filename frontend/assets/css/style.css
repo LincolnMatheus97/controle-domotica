@@ -75,7 +75,7 @@ section {
 }
 
 /* --- Componentes: Listas e Itens --- */
-.comodo-item, .dispositivo-item {
+.comodo-item {
     padding: 15px;
     border: 1px solid var(--cor-borda);
     border-radius: 5px;
@@ -84,10 +84,11 @@ section {
     justify-content: space-between;
     align-items: center;
     transition: background-color 0.3s, box-shadow 0.3s;
+    flex-wrap: wrap;
 }
 
 .comodo-item span {
-    flex-grow: 1; /* Garante que o nome ocupe o espaço disponível */
+    flex-grow: 1;
 }
 
 .comodo-item:hover {
@@ -95,9 +96,16 @@ section {
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
-.comodo-actions {
+.comodo-actions, .dispositivo-actions {
     display: flex;
     gap: 10px;
+}
+
+.dispositivo-container {
+    width: 100%;
+    margin-top: 15px;
+    padding-left: 20px; 
+    display: none; 
 }
 
 /* --- Componentes: Botões (Padrão BEM) --- */
@@ -109,10 +117,10 @@ section {
     font-size: 1rem;
     color: var(--cor-texto-claro);
     transition: background-color 0.3s;
-    white-space: nowrap; /* Impede que o texto do botão quebre linha */
+    white-space: nowrap;
 }
 
-.btn-sm { /* Botão menor para ações dentro dos itens */
+.btn-sm { 
     padding: 5px 10px;
     font-size: 0.9rem;
 }
@@ -241,4 +249,19 @@ section {
 /* --- Classes Utilitárias --- */
 .hidden {
     display: none;
+}
+
+/* --- Lógica de Expansão/Recolhimento --- */
+
+.dispositivos-container {
+    display: none;
+}
+
+.comodo-item.expanded .dispositivos-container {
+    display: block;
+}
+
+.comodo-item.expanded {
+    flex-direction: column;
+    align-items: flex-start;
 }
