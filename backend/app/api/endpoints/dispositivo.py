@@ -49,3 +49,11 @@ def deletar_dispositivo(dispositivo_id: int, db: Session = Depends(get_db)):
     if service.deletar_dispositivo(dispositivo_id):
         return {"message": "Dispositivo deletado com sucesso"}
     raise HTTPException(status_code=404, detail="Dispositivo não encontrado")
+
+@router.get("/comodos/{comodo_id}/dispositivos", response_model=list[DispositivoResponse])
+def listar_dispositivos_do_comodo(comodo_id: int, db: Session = Depends(get_db)):
+    service = DispositivoService(db)
+    try:
+        return service.listar_dispositivos_por_comodo(comodo_id)
+    except Exception:
+        raise HTTPException(status_code=404, detail="Comodo não encontrado")
