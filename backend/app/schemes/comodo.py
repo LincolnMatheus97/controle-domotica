@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from app.schemes.dispositivo import DispositivoInComodoResponse
 
 # Schemas para Comodo
 class ComodoBase(BaseModel):
@@ -11,8 +12,10 @@ class ComodoCreate(ComodoBase):
 class ComodoUpdate(BaseModel):
     nome: Optional[str] = None
 
+
 class ComodoResponse(ComodoBase):
     id: int
-
+    dispositivos: List[DispositivoInComodoResponse] = [] 
+    
     class Config:
         from_attributes = True

@@ -21,6 +21,15 @@ class DispositivoUpdate(BaseModel):
     estado: Optional[bool] = None
     comodo_id: Optional[int] = None
 
+class DispositivoInComodoResponse(BaseModel):
+    id: int
+    nome: str
+    estado: bool
+
+    class Config:
+         from_attributes = True
+
+
 class DispositivoResponse(DispositivoBase):
     id: int
 
