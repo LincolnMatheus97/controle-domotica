@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:8000/api';
+import { API_URL } from "../utils.js";
 
 export async function listarComodos() {
     try {
@@ -9,7 +9,7 @@ export async function listarComodos() {
         return await response.json();
 
     } catch (error) {
-        console.error("Falha ao buscar cômodos:", error);
+        console.error("Falha ao listar cômodos:", error);
         return []; 
     }
 }
@@ -33,14 +33,14 @@ export async function criarComodo(nome) {
     }
 }
 
-export async function attComodo(id, nome) {
+export async function attComodo(id, novoNome) {
     try {
         const response = await fetch(`${API_URL}/comodos/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ nome }),
+            body: JSON.stringify({ nome: novoNome }),
         });
         if (!response.ok) {
             throw new Error(`Erro HTTP: ${response.status}`);
