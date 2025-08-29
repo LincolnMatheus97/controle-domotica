@@ -36,7 +36,7 @@ Aqui está o nosso checklist para acompanhar o andamento da atividade.
 ### Fase 3: Desenvolvimento do Frontend (HTML, CSS, JS)
 - [x] Estrutura básica do HTML e estilização com CSS.
 - [x] Criar interface para listar, criar, editar e remover `Comodos`.
-- [ ] Criar interface para listar, criar, editar e remover `Dispositivos` dentro de um cômodo.
+- [x] Criar interface para listar, criar, editar e remover `Dispositivos` dentro de um cômodo.
 - [ ] Criar interface para ligar/desligar dispositivos.
 - [ ] Criar interface para listar, criar, editar e remover `Cenas`.
 - [ ] Desenvolver a funcionalidade de "play" para executar uma cena.
