@@ -55,3 +55,11 @@ def executar_cena(cena_id: int, db: Session = Depends(get_db)):
         return resultado
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/cenas/{cena_id}/acoes")
+def listar_acoes_da_cena(cena_id: int, db: Session = Depends(get_db)):
+    service = CenaService(db)
+    try:
+        return service.listar_acoes_por_cena(cena_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
