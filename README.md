@@ -37,8 +37,8 @@ Aqui está o nosso checklist para acompanhar o andamento da atividade.
 - [x] Estrutura básica do HTML e estilização com CSS.
 - [x] Criar interface para listar, criar, editar e remover `Comodos`.
 - [x] Criar interface para listar, criar, editar e remover `Dispositivos` dentro de um cômodo.
-- [ ] Criar interface para ligar/desligar dispositivos.
-- [ ] Criar interface para listar, criar, editar e remover `Cenas`.
+- [x] Criar interface para ligar/desligar dispositivos.
+- [x] Criar interface para listar, criar, editar e remover `Cenas`.
 - [ ] Desenvolver a funcionalidade de "play" para executar uma cena.
 
 ### Fase 4: Finalização e Apresentação
