@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from ...database import get_db
 from app.services.cena import CenaService
 from app.schemes.cena import CenaCreate, CenaUpdate, CenaResponse, CenaExecucaoResponse
+from typing import List
+from app.schemes.acao import AcaoResponse 
 
 router = APIRouter()
 
@@ -56,7 +58,7 @@ def executar_cena(cena_id: int, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/cenas/{cena_id}/acoes")
+@router.get("/cenas/{cena_id}/acoes", response_model=List[AcaoResponse])
 def listar_acoes_da_cena(cena_id: int, db: Session = Depends(get_db)):
     service = CenaService(db)
     try:
