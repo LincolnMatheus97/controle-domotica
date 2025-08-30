@@ -75,7 +75,7 @@ section {
 }
 
 /* --- Componentes: Listas e Itens --- */
-.comodo-item {
+.comodo-item, .cena-item {
     padding: 15px;
     border: 1px solid var(--cor-borda);
     border-radius: 5px;
@@ -87,28 +87,61 @@ section {
     flex-wrap: wrap;
 }
 
-.comodo-item span {
+.comodo-item span, .cena-item span {
     flex-grow: 1;
 }
 
-.comodo-item:hover {
+.comodo-item:hover, .cena-item:hover {
     background-color: #f0f8ff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
-.comodo-actions, .dispositivo-actions {
+.comodo-actions, .dispositivo-actions, .cena-actions, .acao-actions {
     display: flex;
     gap: 10px;
 }
 
-.dispositivo-container {
+/* Estilos para o estado do dispositivo */
+.dispositivo-item {
+    display: flex;
+    padding: 0;
+}
+
+.dispositivo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.dispositivo-estado {
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.dispositivo-estado.ligado {
+    background-color: var(--cor-sucesso);
+    color: var(--cor-texto-claro);
+}
+
+.dispositivo-estado.desligado {
+    background-color: #e9ecef;
+    color: var(--cor-texto);
+}
+
+.dispositivo-container, .acoes-container {
     width: 100%;
     margin-top: 15px;
     padding-left: 20px; 
     display: none; 
 }
 
-/* --- Componentes: Botões (Padrão BEM) --- */
+/* --- Componentes: Botões --- */
 .btn {
     padding: 10px 20px;
     border: none;
@@ -253,15 +286,17 @@ section {
 
 /* --- Lógica de Expansão/Recolhimento --- */
 
-.dispositivos-container {
+.dispositivos-container, .acoes-container {
     display: none;
 }
 
-.comodo-item.expanded .dispositivos-container {
+.comodo-item.expanded .dispositivos-container, 
+.cena-item.expanded .acoes-container{
     display: block;
 }
 
-.comodo-item.expanded {
+.comodo-item.expanded ,
+.cena-item.expanded {
     flex-direction: column;
     align-items: flex-start;
 }
