@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
+from app.schemes.acao import AcaoResponse
 
 # Schemas para Cena
 class CenaBase(BaseModel):
@@ -22,6 +23,7 @@ class CenaExecucaoResponse(BaseModel):
 
 class CenaResponse(CenaBase):
     id: int
+    acoes: List[AcaoResponse] = []
 
     class Config:
         from_attributes = True

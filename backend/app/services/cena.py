@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.models.cena import Cena
 from app.models.acao import Acao
 from app.models.dispositivo import Dispositivo
@@ -20,7 +20,7 @@ class CenaService:
         return cena
     
     def buscar_cena(self, id: int) -> Cena:
-        cena = self.db.query(Cena).filter(Cena.id == id).first()
+        cena = self.db.query(Cena).options(joinedload(Cena.acoes)).filter(Cena.id == id).first()
         if not cena:
             raise ValueError("Cena não encontrado.")
         return cena
@@ -42,7 +42,7 @@ class CenaService:
         return True
     
     def listar_cena(self) -> List[Cena]:
-        return self.db.query(Cena).all()
+        return self.db.query(Cena).options(joinedload(Cena.acoes)).all()
     
     def inverter_ativo(self, id: int) -> bool:
         cena = self.buscar_cena(id)
@@ -114,5 +114,3 @@ class CenaService:
         if not acoes:
             raise ValueError("Cena não possui ações cadastradas")
         return acoes
-
-    
