@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.acao import Acao
-from typing import List, Optional
+from typing import List
 
 class AcaoService:
     """Service para gerenciar ações."""
@@ -9,17 +9,21 @@ class AcaoService:
         self.db = db
 
     def criar_acao(self, acao: bool, dispositivo_id: int, cena_id: int, ordem: int, intervalo_segundos: int = None) -> Acao:
-        nova_acao = Acao(
+
+        if not dispositivo_id or not cena_id:
+            raise ValueError("Dispositivo ID e Cena ID são obrigatórios.")
+        
+        acao = Acao(
             acao=acao,
             ordem=ordem,
             intervalo_segundos=intervalo_segundos, 
             dispositivo_id=dispositivo_id, 
             cena_id=cena_id
         )
-        self.db.add(nova_acao)
+        self.db.add(acao)
         self.db.commit()
-        self.db.refresh(nova_acao)
-        return nova_acao
+        self.db.refresh(acao)
+        return acao
     
     def criar_acao_na_cena(self, cena_id: int, dispositivo_id: int, acao: bool, ordem: int, intervalo_segundos: int = None) -> Acao:
         """Método específico para endpoint /cenas/{cena_id}/acoes"""
