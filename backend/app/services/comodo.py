@@ -10,6 +10,11 @@ class ComodoService:
         self.db = db
 
     def criar_comodo(self, nome: str) -> Comodo:
+        # Verifica se o nome do comodo já existe antes de criar
+        comodo_existente = self.db.query(Comodo).filter(Comodo.nome == nome).first()
+        if comodo_existente:
+            raise ValueError("Erro ao criar cômodo.")
+        
         comodo = Comodo(nome=nome)
         self.db.add(comodo)
         self.db.commit()
