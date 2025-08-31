@@ -39,7 +39,7 @@ Aqui está o nosso checklist para acompanhar o andamento da atividade.
 - [x] Criar interface para listar, criar, editar e remover `Dispositivos` dentro de um cômodo.
 - [x] Criar interface para ligar/desligar dispositivos.
 - [x] Criar interface para listar, criar, editar e remover `Cenas`.
-- [ ] Desenvolver a funcionalidade de "play" para executar uma cena.
+- [x] Desenvolver a funcionalidade de "play" para executar uma cena.
 
 ### Fase 4: Finalização e Apresentação
 - [ ] Testes da integração entre Frontend e Backend.
