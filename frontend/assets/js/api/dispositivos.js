@@ -1,5 +1,18 @@
 import { API_URL } from "../utils.js";
 
+export async function listarTodosDispositivos() {
+    try {
+        const response = await fetch(`${API_URL}/dispositivos`);
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Falha ao listar todos os dispositivos:", error);
+        return [];
+    }
+}
+
 export async function listarDispositivosPorComodo(comodoId) {
     try {
         const response = await fetch(`${API_URL}/comodos/${comodoId}/dispositivos`);

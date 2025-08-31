@@ -5,7 +5,7 @@ import { renderizarDispositivos } from "./dispositivos.js";
 const comodosListDiv = getById('comodos-list');
 const novoComodoInput = getById('novo-comodo-nome');
 
-async function redesenharListaDeComodos() {
+export async function redesenharListaDeComodos() {
     const idsExpandidos = new Set();
     document.querySelectorAll('.comodo-item.expanded').forEach(item => {
         idsExpandidos.add(item.dataset.comodoId);

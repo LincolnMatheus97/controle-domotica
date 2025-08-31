@@ -69,24 +69,24 @@ export async function invetEstadoCena(cenaId) {
         if (!response.ok) {
             throw new Error(`Erro HTTP: ${response.status}`);
         }
-        return true;
+        return await response.json();
     } catch (error) {
         console.error("Falha ao alterar estado da cena:", error);
-        return false;
+        return null;
     }
 }
 
-export async function excutarCena(cenaId) {
+export async function executarCena(cenaId) {
     try {
         const response = await fetch(`${API_URL}/cenas/${cenaId}/executar`, {
-            method: 'PUT'
+            method: 'POST'
         });
         if (!response.ok) {
             throw new Error(`Erro HTTP: ${response.status}`);
         }
-        return true;
+        return response.json();
     } catch (error) {
         console.error("Falha ao executar cena:", error);
-        return false;
+        return { sucesso: false, mensagem: error.message };
     }
 }
