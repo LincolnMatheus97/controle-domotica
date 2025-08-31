@@ -2,6 +2,7 @@
 :root {
     --cor-primaria: #007bff;
     --cor-primaria-hover: #0056b3;
+    --cor--ativo: #1e3a3f;
     --cor-perigo: #dc3545;
     --cor-perigo-hover: #c82333;
     --cor-sucesso: #28a745;
@@ -74,6 +75,21 @@ section {
     font-size: 1rem;
 }
 
+.form-container-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.form-container-grid input,
+.form-container-grid select {
+    padding: 8px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
 /* --- Componentes: Listas e Itens --- */
 .comodo-item, .cena-item {
     padding: 15px;
@@ -114,6 +130,70 @@ section {
     padding: 15px;
 }
 
+/* --- Estilos para o Interruptor (Toggle Switch) --- */
+.dispositivo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dispositivo-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--cor-primaria);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
 .dispositivo-estado {
     padding: 10px 15px;
     border-radius: 5px;
@@ -139,6 +219,99 @@ section {
     margin-top: 15px;
     padding-left: 20px; 
     display: none; 
+}
+
+.cena-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: var(--cor-texto-claro);
+    font-weight: 500;
+}
+
+.status-badge.ativa {
+    background-color: var(--cor-sucesso);
+}
+
+.status-badge.inativa {
+    background-color: var(--cor-secundaria);
+}
+
+/* Estilo para a cena inteira quando inativa */
+.cena-item.inativa {
+    background-color: #f8f9fa;
+    opacity: 0.7;
+}
+
+/* Botão de executar desabilitado */
+.btn:disabled {
+    background-color: var(--cor-secundaria-hover);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+}
+.btn-info:hover {
+    background-color: #117a8b;
+}
+
+/* Estilos para o modo de visualização/edição da ação */
+.acao-item {
+    padding: 8px 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    margin-bottom: 5px;
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.acao-item:hover {
+    background-color: #e9ecef;
+}
+
+.acao-item .view-mode,
+.acao-item .edit-mode {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.acao-item .view-mode span {
+    flex-grow: 1;
+}
+
+.acao-item .acao-actions {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.acao-item .edit-mode input,
+.acao-item .edit-mode select {
+    padding: 6px 8px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.acao-item .edit-mode select.edit-acao-dispositivo-id {
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+.hidden {
+    display: none !important;
 }
 
 /* --- Componentes: Botões --- */
@@ -223,6 +396,14 @@ section {
 
 .notificacao.erro {
     background-color: var(--cor-perigo);
+}
+
+.notificacao.info{
+    background-color: var(--cor-aviso);
+}
+
+.notificacao.ativa{
+    background-color: var(--cor--ativo);
 }
 
 /* --- Componentes: Modal de Confirmação --- */
