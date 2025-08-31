@@ -25,7 +25,7 @@ Aqui está o nosso checklist para acompanhar o andamento da atividade.
 
 ### Fase 2: Desenvolvimento do Backend (Python)
 - [x] Configuração do ambiente de desenvolvimento Python.
-- [ ] Conexão com o banco de dados PostgreSQL.
+- [x] Conexão com o banco de dados PostgreSQL.
 - [x] Criação dos modelos/tabelas baseados no DER.
 - [X] Implementação dos endpoints da API para gerenciar `Comodos`.
 - [X] Implementação dos endpoints da API para gerenciar `Dispositivos`.
