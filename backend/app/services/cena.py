@@ -12,7 +12,11 @@ class CenaService:
         self.db = db
     
     def criar_cena(self, nome: str, ativa: bool = True) -> Cena:
-        """Cria uma nova cena"""
+        # Verifica se o nome da cena já existe antes de criar
+        cena_existente = self.db.query(Cena).filter(Cena.nome == nome).first()
+        if cena_existente:
+            raise ValueError("Erro ao criar cena.")
+    
         cena = Cena(nome=nome, ativa=ativa)
         self.db.add(cena)
         self.db.commit()
