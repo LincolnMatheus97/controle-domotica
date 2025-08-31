@@ -1,10 +1,12 @@
-import { attCena, criarCena, excluirCena, listarCenas } from "../api/cenas.js";
+import { attCena, criarCena, excluirCena, executarCena, invetEstadoCena, listarCenas } from "../api/cenas.js";
 import { getById, createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
+import { renderizarAcoes } from "./acoes.js";
+import { redesenharListaDeComodos } from "./comodos.js";
 
 const cenasListDiv = getById('cenas-list');
 const novaCenaInput = getById('nova-cena-nome');
 
-async function redesenharListaDeCenas() {
+export async function redesenharListaDeCenas() {
     const idsExpandidos = new Set();
     document.querySelectorAll('.cena-item.expanded').forEach(item => {
         idsExpandidos.add(item.dataset.cenaId);
@@ -18,7 +20,7 @@ async function redesenharListaDeCenas() {
             if (cenasParaExpandir) {
                 cenasParaExpandir.classList.add('expanded');
                 const container = cenasParaExpandir.querySelector('.acoes-container');
-                // renderizarAcoes(id, container);
+                renderizarAcoes(id, container);
             }
         });
     } 
@@ -27,7 +29,7 @@ async function redesenharListaDeCenas() {
 export async function renderizarCenas() {
     console.log("Renderizando cenas...");
     const cenas = await listarCenas();
-
+    const cenasListDiv = getById('cenas-list');
     cenasListDiv.innerHTML = '';
 
     if (cenas.length === 0) {
@@ -37,17 +39,26 @@ export async function renderizarCenas() {
 
     cenas.forEach(cena => {
         const cenasElement = createByElem('div');
-        cenasElement.className = 'cena-item';
+        cenasElement.className = `cena-item ${!cena.ativa ? 'inativa' : ''}`;
         cenasElement.dataset.cenaId = cena.id;
-
         const qntAcoes = cena.acoes ? cena.acoes.length : 0;
+
+        const statusBadge = cena.ativa ? `<span class="status-badge ativa">Ativa</span>` : `<span class="status-badge inativa">Inativa</span>`;
+        const toggleButtonText = cena.ativa ? 'Desativar' : 'Ativar';
+
+        const executarDesativado = !cena.ativa || qntAcoes === 0;
 
         cenasElement.innerHTML = `
             <div class="cena-header" style="width:100%; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
-                <span>${cena.nome}</span>
-                <div style="display: flex; align-items: center;">
+                <div class="cena-title">
+                    <span>${cena.nome}</span>
+                    ${statusBadge}
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="device-count-badge">${qntAcoes} ações</span>
                     <div class="cena-actions">
+                        <button class="btn btn-sm btn-info btn-toggle-ativa">${toggleButtonText}</button>
+                        <button class="btn btn-sm btn-success btn-executar-cena" ${executarDesativado ? 'disabled' : ''}>Executar</button>
                         <button class="btn btn-sm btn-warning">Editar</button>
                         <button class="btn btn-sm btn-danger">Excluir</button>
                     </div>
@@ -64,7 +75,39 @@ export async function lidarAcoesDasCenas(event) {
     const cenaItem = target.closest('.cena-item');
     if (!cenaItem) return;
 
+    const cenaId = cenaItem.dataset.cenaId;
+
     if (target.closest('.acoes-container')) {
+        return;
+    }
+
+    if (target.classList.contains('btn-toggle-ativa')) {
+        event.stopPropagation();
+
+        const cenaAtualizada = await invetEstadoCena(cenaId);
+        
+        if (cenaAtualizada) {
+            mostrarNotificacao(`Cena "${cenaAtualizada.nome}" foi ${cenaAtualizada.ativa ? 'ativada' : 'desativada'}.`, 'ativa');
+            redesenharListaDeCenas();
+        } else {
+            mostrarNotificacao('Falha ao alterar o status da cena.', 'erro');
+        }
+        return;
+    }
+
+    if (target.classList.contains('btn-executar-cena')) {
+        event.stopPropagation();
+        
+        mostrarNotificacao(`Executando a cena "${cenaItem.querySelector('span').textContent}"...`, 'info');
+
+        const resultado = await executarCena(cenaId);
+
+        if (resultado.sucesso) {
+            mostrarNotificacao(`Cena executada! ${resultado.dispositivos_afetados.length} dispositivos alterados.`, 'info', );
+            await redesenharListaDeComodos();
+        } else {
+            mostrarNotificacao(`Falha ao executar: ${resultado.mensagem}`, 'erro');
+        }
         return;
     }
 
@@ -74,12 +117,15 @@ export async function lidarAcoesDasCenas(event) {
             const confirmado = await abrirModalConfirmacao('Tem certeza que deseja excluir esta cena? Todos as ações serão perdidas.');
             if (confirmado) lidarExcluirCena(cenaId);
         }
+
         if (target.classList.contains('btn-warning')) {
             ativarModoEdicao(cenaItem);
         }
+
         if (target.classList.contains('btn-success')) {
             lidarSalvarEdicao(cenaItem, cenaId);
         }
+
         if (target.classList.contains('btn-secondary')) {
             redesenharListaDeCenas();
         }
@@ -87,18 +133,24 @@ export async function lidarAcoesDasCenas(event) {
     }
     
     if (target.closest('.cena-header')) {
+        if (cenaItem.classList.contains('inativa')) {
+            event.stopPropagation();
+            return; 
+        }
+
         const cenaId = cenaItem.dataset.cenaId;
         const container = cenaItem.querySelector('.acoes-container');
         const isExpanded = cenaItem.classList.toggle('expanded');
 
         if (isExpanded && container.innerHTML === '') {
-            // renderizarAcoes(cenaId, container);
+            renderizarAcoes(cenaId, container);
         }
     }
 }
 
 async function lidarExcluirCena(id) {
     const sucesso = await excluirCena(id);
+
     if (sucesso) {
         mostrarNotificacao('Cena excluída com sucesso!', 'sucesso');
         redesenharListaDeCenas();
