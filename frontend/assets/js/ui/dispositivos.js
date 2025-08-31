@@ -63,6 +63,16 @@ export async function lidarAcoesDosDispositivos(event) {
 
     const dispositivoId = dispositivoItem.dataset.dispositivoId;
 
+    if (target.classList.contains('toggle-estado')) {
+        const novoEstado = target.checked;
+        const sucesso = await attEstadoDispositivo(dispositivoId, novoEstado);
+        if (!sucesso) {
+            mostrarNotificacao('Falha ao alterar o estado do dispositivo.', 'erro');
+            target.checked = !novoEstado;
+        }
+        return;
+    }
+
     if (target.classList.contains('btn-secondary') && target.closest('.dispositivo-estado-edicao')) {
         desativarModoEdicao(dispositivoItem);
         return;
