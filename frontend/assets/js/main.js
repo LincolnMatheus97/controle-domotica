@@ -2,6 +2,7 @@ import { getById } from "./utils.js";
 import { renderizarComodos, lidarAddComodo, lidarAcoesDosComodos } from "./ui/comodos.js";
 import { lidarAcoesDosDispositivos, lidarAddDispositivo } from "./ui/dispositivos.js";
 import { lidarAcoesDasCenas, lidarAddCena, renderizarCenas } from "./ui/cenas.js";
+import { lidarAcoesDasAcoes, lidarAddAcao } from "./ui/acoes.js";
 
 
 function init() {
@@ -15,40 +16,36 @@ function init() {
     addComodoButton.addEventListener('click', lidarAddComodo);
     addCenaButton.addEventListener('click', lidarAddCena);
 
-    // Listener principal (orquestrador)
+    // Listener para Cômodos e Dispositivos
     comodosList.addEventListener('click', (event) => {
         const target = event.target;
-
         if (target.classList.contains('btn-add-dispositivo')) {
             lidarAddDispositivo(event);
-
         } else if (target.closest('.dispositivo-item')) {
             lidarAcoesDosDispositivos(event);
-
         } else if (target.closest('.comodo-item')) {
             lidarAcoesDosComodos(event);
         }
     });
 
+    // Listener para Cenas e Ações
     cenaList.addEventListener('click', (event) => {
         const target = event.target;
-
         if (target.classList.contains('btn-add-acao')) {
-            // lidarAddAcoes(event);
+            lidarAddAcao(event);
         } else if (target.closest('.acao-item')) {
-            // lidarActionsDasAcoes(event);
+            lidarAcoesDasAcoes(event);
         } else if (target.closest('.cena-item')) {
             lidarAcoesDasCenas(event);
         }
     });
-
-    // Listener secundario 
+    
+    // Listener para fechar itens expandidos
     document.addEventListener('click', (event) => {
         const target = event.target;
-        if (!target.closest('#cenas-section') && !target.closest('#confirm-modal')) {
-            const comodosExpandidos = document.querySelectorAll('.cena-item.expanded');
-            comodosExpandidos.forEach(cena => {
-                cena.classList.remove('expanded');
+        if (!target.closest('#comodos-section') && !target.closest('#cenas-section') && !target.closest('#confirm-modal')) {
+            document.querySelectorAll('.comodo-item.expanded, .cena-item.expanded').forEach(item => {
+                item.classList.remove('expanded');
             });
         }
     });
