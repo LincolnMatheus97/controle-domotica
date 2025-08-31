@@ -60,9 +60,12 @@ export function abrirModalConfirmacao(message) {
             }
         };
 
-        // Adiciona os listeners
         btnConfirm.addEventListener('click', onConfirm);
         btnCancel.addEventListener('click', onCancel);
         overlay.addEventListener('click', onOverlayClick);
     });
+}
+
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
