@@ -60,6 +60,18 @@ export async function renderizarComodos() {
     });
 }
 
+function desativarModoEdicaoComodo(comodoItem) {
+    const formEdicao = comodoItem.querySelector('.form-container');
+    if (formEdicao && !formEdicao.closest('.dispositivos-container')) {
+        formEdicao.remove();
+    }
+
+    const header = comodoItem.querySelector('.comodo-header');
+    if (header) {
+        header.style.display = 'flex';
+    }
+}
+
 export async function lidarAcoesDosComodos(event) {
     const target = event.target;
     const comodoItem = target.closest('.comodo-item');
@@ -82,7 +94,7 @@ export async function lidarAcoesDosComodos(event) {
             lidarSalvarEdicao(comodoItem, comodoId);
         }
         if (target.classList.contains('btn-secondary')) {
-            redesenharListaDeComodos();
+            desativarModoEdicaoComodo(comodoItem);
         }
         return;
     }
