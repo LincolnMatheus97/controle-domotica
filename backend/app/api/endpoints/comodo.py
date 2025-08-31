@@ -9,12 +9,18 @@ router = APIRouter()
 @router.get("/comodos", response_model=list[ComodoResponse])
 def listar_comodos(db: Session = Depends(get_db)):
     service = ComodoService(db)
-    return service.listar_comodo()
-
+    try:
+        return service.listar_comodo()
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Nenhum cômodo encontrado")
+    
 @router.post("/comodos", response_model=ComodoResponse, status_code=201)
 def criar_comodo(comodo: ComodoCreate, db: Session = Depends(get_db)):
     service = ComodoService(db)
-    return service.criar_comodo(comodo.nome)
+    try:
+        return service.criar_comodo(comodo.nome)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Erro ao criar cômodo.")
 
 @router.get("/comodos/{comodo_id}", response_model=ComodoResponse)
 def buscar_comodo(comodo_id: int, db: Session = Depends(get_db)):
