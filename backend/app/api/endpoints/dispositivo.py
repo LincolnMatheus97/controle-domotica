@@ -9,25 +9,35 @@ router = APIRouter()
 @router.get("/dispositivos", response_model=list[DispositivoResponse])
 def listar_dispositivos(db: Session = Depends(get_db)):
     service = DispositivoService(db)
-    return service.listar_dispositivo()
-
+    try:
+        return service.listar_dispositivo()
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Nenhum dispositivo encontrado")
+    
 @router.post("/dispositivos", response_model=DispositivoResponse, status_code=201)
 def criar_dispositivo(dispositivo: DispositivoCreate, db: Session = Depends(get_db)):
     service = DispositivoService(db)
-    return service.criar_dispositivo(dispositivo.nome, dispositivo.estado, dispositivo.comodo_id)
-
+    try:
+        return service.criar_dispositivo(dispositivo.nome, dispositivo.estado, dispositivo.comodo_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Erro ao criar dispositivo.")
+    
 @router.post("/comodos/{comodo_id}/dispositivos", response_model=DispositivoResponse, status_code=201)
 def criar_dispositivo_no_comodo(comodo_id: int, dispositivo: DispositivoCreateInRoom, db: Session = Depends(get_db)):
     service = DispositivoService(db)
-    return service.criar_dispositivo_no_comodo(comodo_id, dispositivo.nome, dispositivo.estado)
-
+    try:    
+        return service.criar_dispositivo_no_comodo(comodo_id, dispositivo.nome, dispositivo.estado)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Erro ao criar dispositivo no cômodo.")
+    
 @router.get("/dispositivos/{dispositivo_id}", response_model=DispositivoResponse)
 def buscar_dispositivo(dispositivo_id: int, db: Session = Depends(get_db)):
     service = DispositivoService(db)
-    dispositivo = service.buscar_dispositivo_por_id(dispositivo_id)
-    if not dispositivo:
+    try:
+        dispositivo = service.buscar_dispositivo_por_id(dispositivo_id)
+        return dispositivo
+    except ValueError:
         raise HTTPException(status_code=404, detail="Dispositivo não encontrado")
-    return dispositivo
 
 @router.get("/dispositivos/nome/{nome}", response_model=DispositivoResponse)
 def buscar_dispositivo_por_nome(nome: str, db: Session = Depends(get_db)):
@@ -41,14 +51,17 @@ def buscar_dispositivo_por_nome(nome: str, db: Session = Depends(get_db)):
 @router.put("/dispositivos/{dispositivo_id}", response_model=DispositivoResponse)
 def atualizar_dispositivo(dispositivo_id: int, dispositivo: DispositivoUpdate, db: Session = Depends(get_db)):
     service = DispositivoService(db)
-    return service.atualizar_dispositivo(dispositivo_id, dispositivo.nome, dispositivo.estado, dispositivo.comodo_id)
+    try:
+        return service.atualizar_dispositivo(dispositivo_id, dispositivo.nome, dispositivo.estado, dispositivo.comodo_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Dispositivo não encontrado e erro ao atualizar")
 
 @router.delete("/dispositivos/{dispositivo_id}")
 def deletar_dispositivo(dispositivo_id: int, db: Session = Depends(get_db)):
     service = DispositivoService(db)
     if service.deletar_dispositivo(dispositivo_id):
         return {"message": "Dispositivo deletado com sucesso"}
-    raise HTTPException(status_code=404, detail="Dispositivo não encontrado")
+    raise HTTPException(status_code=404, detail="Dispositivo não encontrado e erro ao deletar")
 
 @router.get("/comodos/{comodo_id}/dispositivos", response_model=list[DispositivoResponse])
 def listar_dispositivos_do_comodo(comodo_id: int, db: Session = Depends(get_db)):
