@@ -9,6 +9,11 @@ class DispositivoService:
         self.db = db
 
     def criar_dispositivo(self, nome: str, estado: bool = False, comodo_id: int = None) -> Dispositivo:
+        # Verifica se o nome do dispositivo já existe antes de criar
+        dispositivo_existente = self.db.query(Dispositivo).filter(Dispositivo.nome == nome).first()
+        if dispositivo_existente:
+            raise ValueError("Erro ao criar dispositivo.")
+            
         dispositivo = Dispositivo(nome=nome, estado=estado, comodo_id=comodo_id)
         self.db.add(dispositivo)
         self.db.commit()
@@ -53,7 +58,10 @@ class DispositivoService:
         return True
     
     def listar_dispositivo(self) -> List[Dispositivo]:
-        return self.db.query(Dispositivo).all()
+        dispositivos = self.db.query(Dispositivo).all()
+        if not dispositivos:
+            raise ValueError("Nenhum dispositivo encontrado.")
+        return dispositivos
     
     def ativar_dispositivo(self, id: int) -> bool:
         dispositivo = self.buscar_dispositivo_por_id(id)
@@ -61,6 +69,9 @@ class DispositivoService:
         self.db.commit()
         self.db.refresh(dispositivo)
         return True
+    
+    """
+    bom dia, só relemmbrando das mudanças a serem feitas por usa pessoa no dia de hoje: refatorar o codigo, lançammento de mmelhoriua e verificação nos mmetodos dos services, emlhoria de verificação de valueerror nos endpoints também, após fazer tudo isso você deve commeçar o processo de dockenizar a aplicação"""
 
 
     
