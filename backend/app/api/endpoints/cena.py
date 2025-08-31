@@ -11,13 +11,19 @@ router = APIRouter()
 @router.get("/cenas", response_model=list[CenaResponse])
 def listar_cenas(db: Session = Depends(get_db)):
     service = CenaService(db)
-    return service.listar_cena()
+    try:
+        return service.listar_cena()
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Nenhuma cena encontrada")
 
 @router.post("/cenas", response_model=CenaResponse, status_code=201)
 def criar_cena(cena: CenaCreate, db: Session = Depends(get_db)):
     service = CenaService(db)
-    return service.criar_cena(cena.nome, cena.ativa)
-
+    try:
+        return service.criar_cena(cena.nome, cena.ativa)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Erro ao criar cena.")
+    
 @router.get("/cenas/{cena_id}", response_model=CenaResponse)
 def buscar_cena(cena_id: int, db: Session = Depends(get_db)):
     service = CenaService(db)
@@ -29,14 +35,19 @@ def buscar_cena(cena_id: int, db: Session = Depends(get_db)):
 @router.put("/cenas/{cena_id}", response_model=CenaResponse)
 def atualizar_cena(cena_id: int, cena: CenaUpdate, db: Session = Depends(get_db)):
     service = CenaService(db)
-    return service.atualizar_cena(cena_id, cena.nome, cena.ativa)
-
+    try:
+        return service.atualizar_cena(cena_id, cena.nome, cena.ativa)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Cena não encontrada e erro ao atualizar")
+    
 @router.delete("/cenas/{cena_id}")
 def deletar_cena(cena_id: int, db: Session = Depends(get_db)):
     service = CenaService(db)
-    if service.deletar_cena(cena_id):
+    try:
+        service.deletar_cena(cena_id)
         return {"message": "Cena deletada com sucesso"}
-    raise HTTPException(status_code=404, detail="Cena não encontrada")
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Cena não encontrada e erro ao deletar")
 
 
 @router.put("/cenas/{cena_id}/inverter", response_model=CenaResponse)
