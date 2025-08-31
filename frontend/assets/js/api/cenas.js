@@ -23,6 +23,9 @@ export async function criarCena(nome, estado) {
             },
             body: JSON.stringify({ nome, estado }),
         });
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
         return await response.json();
     } catch (error) {
         console.error("Falha ao criar cena:", error);
@@ -39,6 +42,9 @@ export async function attCena(cenaId, novoNome) {
             },
             body: JSON.stringify({ nome: novoNome}),
         });
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
         return await response.json();
     } catch (error) {
         console.error("Falha ao alterar cena:", error);
