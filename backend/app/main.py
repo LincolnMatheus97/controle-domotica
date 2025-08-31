@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.endpoints import comodo_router, dispositivo_router, cena_router, acao_router
 from app.database.database import init_db
 import uvicorn
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 async def lifespan(app: FastAPI):
     init_db()  
@@ -30,11 +32,12 @@ app.include_router(comodo_router, prefix="/api", tags=["comodos"])
 app.include_router(dispositivo_router, prefix="/api", tags=["dispositivos"])
 app.include_router(cena_router, prefix="/api", tags=["cenas"])
 app.include_router(acao_router, prefix="/api", tags=["acoes"])
+app.mount("/assets", StaticFiles(directory="../frontend/assets"), name="assets")
 
 # Endpoint básico
 @app.get("/")
 def root():
-    return {"message": "API Domótica funcionando!"}
+    return FileResponse("../frontend/index.html", media_type="text/html")
 
 # Endpoint de saúde da API
 @app.get("/health")
