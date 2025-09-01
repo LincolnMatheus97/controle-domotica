@@ -1,4 +1,5 @@
 import { listarAcoesPorCena, criarAcao, excluirAcao, attAcao } from "../api/acoes.js";
+import { listarComodos } from "../api/comodos.js";
 import { listarTodosDispositivos } from "../api/dispositivos.js";
 import { createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
 import { redesenharListaDeCenas } from "./cenas.js";
@@ -6,10 +7,13 @@ import { redesenharListaDeCenas } from "./cenas.js";
 export async function renderizarAcoes(cenaId, container) {
     container.innerHTML = '<p>Carregando Ações...</p>';
 
-    const [acoes, dispositivos] = await Promise.all([
+    const [acoes, dispositivos, comodos] = await Promise.all([
         listarAcoesPorCena(cenaId),
-        listarTodosDispositivos()
+        listarTodosDispositivos(),
+        listarComodos()
     ]);
+
+    const comodosMap = new Map(comodos.map(c => [c.id, c.nome]));
 
     container.innerHTML = '';
 
@@ -19,9 +23,10 @@ export async function renderizarAcoes(cenaId, container) {
         acoes.forEach(acao => {
             const dispositivo = dispositivos.find(d => d.id === acao.dispositivo_id);
             const nomeDispositivo = dispositivo ? dispositivo.nome : `ID ${acao.dispositivo_id} (não encontrado)`;
-            const optionsDispositivos = dispositivos.map(d => `<option value="${d.id}" ${d.id === acao.dispositivo_id ? 'selected' : ''}>${d.nome}</option>`).join('');
-
-
+            const optionsDispositivosEdicao = dispositivos.map(d => {
+                const comodoNome = comodosMap.get(d.comodo_id) || 'N/A';
+                return `<option value="${d.id}" ${d.id === acao.dispositivo_id ? 'selected' : ''}>${d.nome} (${comodoNome})</option>`;
+            }).join('');
             const acaoEl = createByElem('div');
             acaoEl.className = 'acao-item';
             acaoEl.dataset.acaoId = acao.id;
@@ -37,7 +42,7 @@ export async function renderizarAcoes(cenaId, container) {
                 <div class="edit-mode hidden">
                     <input type="number" class="edit-acao-ordem" value="${acao.ordem}" style="width: 60px;">
                     <select class="edit-acao-dispositivo-id">
-                        ${optionsDispositivos}
+                        ${optionsDispositivosEdicao}
                     </select>
                     <select class="edit-acao-acao">
                         <option value="true" ${acao.acao ? 'selected' : ''}>Ligar</option>
@@ -58,13 +63,16 @@ export async function renderizarAcoes(cenaId, container) {
     formAdicionar.className = 'form-container-grid';
     formAdicionar.style.marginTop = '15px';
 
-    const optionsDispositivos = dispositivos.map(d => `<option value="${d.id}">${d.nome}</option>`).join('');
+    const optionsDispositivosAdicionar = dispositivos.map(d => {
+        const comodoNome = comodosMap.get(d.comodo_id) || 'N/A';
+        return `<option value="${d.id}">${d.nome} (${comodoNome})</option>`;
+    }).join('');
 
     formAdicionar.innerHTML = `
         <input type="number" class="nova-acao-ordem" placeholder="Ordem" style="width: 80px;">
         <select class="nova-acao-dispositivo-id">
             <option value="">Selecione o Dispositivo</option>
-            ${optionsDispositivos}
+            ${optionsDispositivosAdicionar}
         </select>
         <select class="nova-acao-acao">
             <option value="true">Ligar</option>
@@ -117,10 +125,9 @@ export async function lidarAcoesDasAcoes(event) {
     const acaoItem = target.closest('.acao-item');
     if (!acaoItem) return;
 
-    const acaoId = acaoItem.dataset.acaoId;
+    const acaoIdAtual = acaoItem.dataset.acaoId;
     const cenaItem = target.closest('.cena-item');
     const cenaId = cenaItem.dataset.cenaId;
-    const container = cenaItem.querySelector('.acoes-container');
 
     const viewMode = acaoItem.querySelector('.view-mode');
     const editMode = acaoItem.querySelector('.edit-mode');
@@ -128,7 +135,7 @@ export async function lidarAcoesDasAcoes(event) {
     if (target.classList.contains('btn-excluir-acao')) {
         const confirmado = await abrirModalConfirmacao("Tem certeza que deseja excluir esta ação?");
         if (confirmado) {
-            const sucesso = await excluirAcao(acaoId);
+            const sucesso = await excluirAcao(acaoIdAtual);
             if (sucesso) {
                 mostrarNotificacao('Ação excluída com sucesso!', 'sucesso');
                 await redesenharListaDeCenas(); 
@@ -137,29 +144,54 @@ export async function lidarAcoesDasAcoes(event) {
             }
         }
     } else if (target.classList.contains('btn-editar-acao')) {
-
         viewMode.classList.add('hidden');
         editMode.classList.remove('hidden');
     } else if (target.classList.contains('btn-cancelar-edicao-acao')) {
         viewMode.classList.remove('hidden');
         editMode.classList.add('hidden');
     } else if (target.classList.contains('btn-salvar-acao')) {
-        const ordem = acaoItem.querySelector('.edit-acao-ordem').value;
+        const novaOrdem = parseInt(acaoItem.querySelector('.edit-acao-ordem').value);
         const dispositivoId = acaoItem.querySelector('.edit-acao-dispositivo-id').value;
         const acao = acaoItem.querySelector('.edit-acao-acao').value === 'true';
         const intervalo = acaoItem.querySelector('.edit-acao-intervalo').value;
 
-        if (!ordem || !dispositivoId) {
-            mostrarNotificacao('Preencha a ordem e selecione um dispositivo para salvar.', 'erro');
+        const todasAcoes = await listarAcoesPorCena(cenaId);
+        
+        const acaoAtual = todasAcoes.find(a => a.id == acaoIdAtual);
+        const ordemAntiga = acaoAtual.ordem;
+
+        if (novaOrdem === ordemAntiga) {
+            const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
+            if(sucesso) mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
+            else mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
+            await redesenharListaDeCenas();
             return;
         }
 
-        const sucesso = await attAcao(acaoId, acao, intervalo, ordem, dispositivoId);
-        if (sucesso) {
-            mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
-            renderizarAcoes(cenaId, container);
+        const acaoConflitante = todasAcoes.find(a => a.ordem === novaOrdem);
+
+        if (acaoConflitante) {
+            mostrarNotificacao('Trocando ordem das ações...', 'info');
+
+            const [sucessoAcaoAtual, sucessoAcaoConflitante] = await Promise.all([
+                attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId),
+                attAcao(acaoConflitante.id, acaoConflitante.acao, acaoConflitante.intervalo_segundos, ordemAntiga, acaoConflitante.dispositivo_id) // Ação antiga -> ordem antiga
+            ]);
+
+            if (sucessoAcaoAtual && sucessoAcaoConflitante) {
+                mostrarNotificacao('Ordem das ações trocada com sucesso!', 'sucesso');
+            } else {
+                mostrarNotificacao('Ocorreu um erro ao trocar a ordem das ações.', 'erro');
+            }
+
         } else {
-            mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
+            const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
+            if (sucesso) {
+                mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
+            } else {
+                mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
+            }
         }
+        await redesenharListaDeCenas();
     }
 }
