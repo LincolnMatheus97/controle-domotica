@@ -1,6 +1,7 @@
 import { getById, createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
 import { listarComodos, criarComodo, excluirComodo, attComodo } from "../api/comodos.js";
 import { renderizarDispositivos } from "./dispositivos.js";
+import { redesenharListaDeCenas } from "./cenas.js";
 
 const comodosListDiv = getById('comodos-list');
 const novoComodoInput = getById('novo-comodo-nome');
@@ -151,7 +152,8 @@ async function lidarSalvarEdicao(comodoItem, id) {
     const comodoAtualizado = await attComodo(id, novoNome);
     if (comodoAtualizado) {
         mostrarNotificacao('Cômodo atualizado com sucesso!', 'sucesso');
-        redesenharListaDeComodos();
+        await redesenharListaDeComodos();
+        await redesenharListaDeCenas();
     } else {
         mostrarNotificacao('Falha ao atualizar o cômodo.', 'erro');
     }
