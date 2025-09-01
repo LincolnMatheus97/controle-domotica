@@ -9,12 +9,10 @@ class DispositivoService:
         self.db = db
 
     def criar_dispositivo(self, nome: str, estado: bool = False, comodo_id: int = None) -> Dispositivo:
-        # Verifica se o nome do dispositivo já existe antes de criar
-        dispositivo_existente = self.db.query(Dispositivo).filter(Dispositivo.nome == nome).first()
-        if dispositivo_existente:
-            raise ValueError("Erro ao criar dispositivo.")
             
         dispositivo = Dispositivo(nome=nome, estado=estado, comodo_id=comodo_id)
+        if not dispositivo:
+            raise ValueError("Erro ao criar dispositivo.")
         self.db.add(dispositivo)
         self.db.commit()
         self.db.refresh(dispositivo)
