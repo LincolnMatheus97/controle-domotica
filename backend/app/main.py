@@ -35,12 +35,12 @@ app.include_router(cena_router, prefix="/api", tags=["cenas"])
 app.include_router(acao_router, prefix="/api", tags=["acoes"])
 
 # Montar arquivos estáticos
-app.mount("/assets", StaticFiles(directory="/app/frontend/assets"), name="assets")
+app.mount("/assets", StaticFiles(directory="../frontend/assets"), name="assets")
 
 # Endpoint básico
 @app.get("/")
 def root():
-    return FileResponse("/app/frontend/index.html")
+    return FileResponse("../frontend/index.html")
 
 # Endpoint de saúde da API
 @app.get("/health")
