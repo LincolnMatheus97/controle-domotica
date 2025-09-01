@@ -6,7 +6,7 @@ class Dispositivo(Base):
     __tablename__ = "dispositivos"
     
     id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String(100), nullable=False, unique = True)
+    nome = Column(String(100), nullable=False)
     estado = Column(Boolean, default=False)
     comodo_id = Column(Integer, ForeignKey("comodos.id"), nullable=False)
     
