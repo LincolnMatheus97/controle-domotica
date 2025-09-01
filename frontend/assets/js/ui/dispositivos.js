@@ -1,5 +1,6 @@
 import { createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
 import { attDispositivo, attEstadoDispositivo, criarDispositivo, excluirDispositivo, listarDispositivosPorComodo } from "../api/dispositivos.js";
+import { redesenharListaDeCenas } from "./cenas.js";
 
 export async function renderizarDispositivos(comodoId, container) {
     container.innerHTML = '<p>Carregando Dispositivos...</p>';
@@ -105,7 +106,7 @@ export async function lidarAcoesDosDispositivos(event) {
     if (target.classList.contains('btn-danger')) {
         const confirmado = await abrirModalConfirmacao("Tem certeza que deseja excluir esse dispositivo? Ele será removido permanentemente.");
         if (confirmado) {
-            lidarExcluirDispositivo(dispositivoId, dispositivoItem);
+            await lidarExcluirDispositivo(dispositivoId, dispositivoItem);
         }
     }
 
@@ -130,6 +131,7 @@ async function lidarExcluirDispositivo(id, dispositivoItem) {
         mostrarNotificacao('Dispositivo excluído com sucesso!', 'sucesso');
         dispositivoItem.remove();
         atualizarContadorDispositivos(comodoItem);
+        await redesenharListaDeCenas();
     } else {
         mostrarNotificacao('Falha ao excluir o dispositivo.', 'erro');
     }
@@ -173,6 +175,7 @@ async function lidarSalvarEdicao(dispositivoItem, id) {
         const comodoId = comodoItem.dataset.comodoId;
         const container = comodoItem.querySelector('.dispositivos-container');
         await renderizarDispositivos(comodoId, container);
+        await redesenharListaDeCenas();
     } else {
         mostrarNotificacao('Falha ao atualizar o Dispositivo.', 'erro');
     }
@@ -197,6 +200,7 @@ export async function lidarAddDispositivo(event) {
     if (novoDispositivo) {
         mostrarNotificacao('Dispositivo adicionado com sucesso!', 'sucesso');
         await renderizarDispositivos(comodoId, container);
+        await redesenharListaDeCenas();
         atualizarContadorDispositivos(comodoItem);
     } else {
         mostrarNotificacao('Falha ao adicionar o dispositivo.', 'erro');
