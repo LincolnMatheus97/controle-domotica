@@ -115,6 +115,4 @@ class CenaService:
         if not cena:
             raise ValueError("Cena não encontrada")
         acoes = self.db.query(Acao).filter(Acao.cena_id == cena_id).order_by(Acao.ordem).all()
-        if not acoes:
-            raise ValueError("Cena não possui ações cadastradas")
         return acoes
