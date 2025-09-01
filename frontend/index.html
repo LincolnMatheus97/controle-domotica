@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Domótica</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
-        <header id="header">
+    <header id="header">
         <!-- <img src="./imgs/home.png" alt="icone casa" width="35px" height="35px"> -->
         <div class="apresentacao">
             <div class="titulo">
@@ -17,12 +19,51 @@
                     <span class="word-domotica">Domotica</span>
                 </h1>
                 <div class="linha-titulo"></div>
+                <p>
+                    Automatize sua casa de forma simples e inteligente.
+                    Controle cômodos, personalize cenas e deixe a
+                    tecnologia cuidar do seu conforto com apenas um clique.
+                </p>
             </div>
 
             <div class="container-links">
-                <a href="#comodos-section">Comodos</a>
-                <a href="#cenas-section">Cenas</a>
-                <a href="#sobre-section">Sobre</a>
+                <div class="ctn-card">
+                    <div class="card one">
+                        <div class="img">
+                            <span>Comodos</span>
+                        </div>
+                        <div class="content">
+                            <span class="title">Os comodos da casa</span>
+                            <p class="desc">
+                                Adicione e controle seus dispositivos em cada ambiente. Ligue, desligue, edite ou remova
+                                com facilidade
+                                e veja quantos estão ativos em tempo real.</p>
+                            <a href="#comodos-section">Ir para comodos</a>
+                        </div>
+                        <div class="arrow">
+                            <span><img src="./assets/img/indicador-seta.png" alt="" width="20px"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ctn-card">
+                    <div class="card true">
+                        <div class="img">
+                            <span>Cenas</span>
+                        </div>
+                        <div class="content">
+                            <span class="title">Os cenas da casa</span>
+                            <p class="desc">
+                                Crie combinações inteligentes de dispositivos. Programe a ordem, os intervalos e ative
+                                tudo de uma só vez para
+                                transformar o ambiente do seu jeito.</p>
+                            <a href="#cenas-section">Ir para cenas</a>
+                        </div>
+                        <div class="arrow">
+                            <span><img src="./assets/img/indicador-seta.png" alt="" width="20px"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="container-animacao">
@@ -60,20 +101,33 @@
 
     <main>
         <section class="esconder" id="comodos-section">
-            <a href="#header"><img class="seta" src="./assets/img/pra-cima.png" alt="seta para cima" width="40px"></a>
-            <h2>Cômodos</h2>
-            <div id="comodos-list">
+            <a href="#header" class="btn-seta"><img class="seta" src="./assets/img/pra-cima.png"
+                    alt="seta para cima"></a>
+            <div class="container-comodos">
+                <h1>Cômodos</h1>
+                <div class="ctn-comodos-input-list">
+                    <div class="formulario">
+                        <div class="form-container">
+                            <h2>Adicionar comodos</h2>
+                            <div class="form">
+                                <span>Nome</span>
+                                <input type="text" id="novo-comodo-nome" placeholder="Digite o nome">
+                                <button id="btn-add-comodo">Adicionar Cômodo</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="comodos-list">
 
+                    </div>
+                </div>
             </div>
-            <div class="form-container">
-                <input type="text" id="novo-comodo-nome" placeholder="Nome do novo cômodo">
-                <button id="btn-add-comodo" class="btn btn-primary">Adicionar Cômodo</button>
-            </div>
-            <a href="#cenas-section"><img class="seta" src="./assets/img/seta-para-baixo.png" alt="" width="40px"></a>
+            <a href="#cenas-section" class="btn-seta"><img class="seta" src="./assets/img/seta-para-baixo.png"
+                    alt=""></a>
         </section>
 
         <section class="esconder" id="cenas-section">
-            <a href="#comodos-section"><img class="seta" src="./assets/img/pra-cima.png" alt="seta para cima" width="40px"></a>
+            <a href="#comodos-section" class="btn-seta"><img class="seta" src="./assets/img/pra-cima.png"
+                    alt="seta para cima"></a>
             <h2>Cenas</h2>
             <div id="cenas-list">
 
@@ -82,10 +136,12 @@
                 <input type="text" id="nova-cena-nome" placeholder="Nome do nova cena">
                 <button id="btn-add-cena" class="btn btn-primary">Adicionar Cena</button>
             </div>
-            <a href="#sobre-section"><img class="seta" src="./assets/img/seta-para-baixo.png" alt="" width="40px"></a>
+            <a href="#sobre-section" class="btn-seta"><img class="seta" src="./assets/img/seta-para-baixo.png"
+                    alt=""></a>
         </section>
         <section class="esconder" id="sobre-section">
-            <a href="#cenas-section"><img src="assets/img/pra-cima.png" alt="seta pra cima" width="40px"></a>
+            <a href="#cenas-section" class="btn-seta"><img class="seta" src="assets/img/pra-cima.png"
+                    alt="seta pra cima"></a>
             <h2>Sobre</h2>
         </section>
 
@@ -106,4 +162,5 @@
     <script type="module" src="assets/js/main.js"></script>
     <script type="module" src="assets/js/script.js"></script>
 </body>
+
 </html>
