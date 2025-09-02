@@ -23,6 +23,7 @@ export async function renderizarAcoes(cenaId, container) {
         acoes.forEach(acao => {
             const dispositivo = dispositivos.find(d => d.id === acao.dispositivo_id);
             const nomeDispositivo = dispositivo ? dispositivo.nome : `ID ${acao.dispositivo_id} (não encontrado)`;
+            const nomeComodo = dispositivo ? ((comodosMap.get(dispositivo.comodo_id)) || 'N/A') : '';
             const optionsDispositivosEdicao = dispositivos.map(d => {
                 const comodoNome = comodosMap.get(d.comodo_id) || 'N/A';
                 return `<option value="${d.id}" ${d.id === acao.dispositivo_id ? 'selected' : ''}>${d.nome} (${comodoNome})</option>`;
@@ -33,7 +34,7 @@ export async function renderizarAcoes(cenaId, container) {
 
             acaoEl.innerHTML = `
                 <div class="view-mode">
-                    <span>Ordem: ${acao.ordem} - Ação: <strong>${acao.acao ? 'Ligar' : 'Desligar'}</strong> ${nomeDispositivo} (intervalo: ${acao.intervalo_segundos || 0}s)</span>
+                    <span>Ordem: ${acao.ordem} - Ação: <strong>${acao.acao ? 'Ligar' : 'Desligar'}</strong> ${nomeDispositivo} em (${nomeComodo}) - (intervalo: ${acao.intervalo_segundos || 0}s)</span>
                     <div class="acao-actions">
                         <button class="btn btn-sm btn-secondary btn-editar-acao">Editar</button>
                         <button class="btn btn-sm btn-danger btn-excluir-acao">Excluir</button>
