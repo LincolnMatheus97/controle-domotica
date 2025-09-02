@@ -20,6 +20,15 @@ export async function renderizarAcoes(cenaId, container) {
     if (acoes.length === 0) {
         container.innerHTML = '<p>Nenhuma ação cadastrada nesta cena.</p>';
     } else {
+
+        // ADICIONEI ISSO AQUI
+        const titulo = createByElem('h3');
+        titulo.textContent = 'Sequência de ações';
+        titulo.style.marginBottom = '10px';
+        titulo.className = 'titulo-acoes'
+        container.appendChild(titulo);
+
+
         acoes.forEach(acao => {
             const dispositivo = dispositivos.find(d => d.id === acao.dispositivo_id);
             const nomeDispositivo = dispositivo ? dispositivo.nome : `ID ${acao.dispositivo_id} (não encontrado)`;
@@ -32,9 +41,18 @@ export async function renderizarAcoes(cenaId, container) {
             acaoEl.className = 'acao-item';
             acaoEl.dataset.acaoId = acao.id;
 
+            // ADICIONEI ISSO AQUI
+            const ctnAcao = createByElem('div')
+            ctnAcao.className = 'ctn-acao'
+
+            // ALTEREI ISSO AQUI
             acaoEl.innerHTML = `
                 <div class="view-mode">
-                    <span>Ordem: ${acao.ordem} - Ação: <strong>${acao.acao ? 'Ligar' : 'Desligar'}</strong> ${nomeDispositivo} em (${nomeComodo}) - (intervalo: ${acao.intervalo_segundos || 0}s)</span>
+                    <div class='acao-info'>
+                        <div class='title-ordem'><span>${acao.ordem} Ordem</span></div>
+                        <span>Ação: <strong>${acao.acao ? 'Ligar' : 'Desligar'}</strong></span>
+                        ${nomeDispositivo} em (${nomeComodo}) - (intervalo: ${acao.intervalo_segundos || 0}s)
+                    </div>
                     <div class="acao-actions">
                         <button class="btn btn-sm btn-secondary btn-editar-acao">Editar</button>
                         <button class="btn btn-sm btn-danger btn-excluir-acao">Excluir</button>
@@ -56,7 +74,8 @@ export async function renderizarAcoes(cenaId, container) {
                     </div>
                 </div>
             `;
-            container.appendChild(acaoEl);
+            ctnAcao.appendChild(acaoEl)
+            container.appendChild(ctnAcao);
         });
     }
 
@@ -69,16 +88,23 @@ export async function renderizarAcoes(cenaId, container) {
         return `<option value="${d.id}">${d.nome} (${comodoNome})</option>`;
     }).join('');
 
+    
+    // ALTEREI ISSO AQUI
     formAdicionar.innerHTML = `
-        <input type="number" class="nova-acao-ordem" placeholder="Ordem" style="width: 80px;">
+        <h2>Adicionar ação</h2>
+        <span>Número de ordem</span>
+        <input type="number" class="nova-acao-ordem" placeholder="Ordem" style="width: 100px;">
+        <span>Tipo de dispositivo</span>
         <select class="nova-acao-dispositivo-id">
             <option value="">Selecione o Dispositivo</option>
             ${optionsDispositivosAdicionar}
         </select>
+        <span>Modo</span>
         <select class="nova-acao-acao">
             <option value="true">Ligar</option>
             <option value="false">Desligar</option>
         </select>
+        <span>Intervalo</span>
         <input type="number" class="nova-acao-intervalo" placeholder="Intervalo (s)" value="0" style="width: 120px;">
         <button class="btn btn-primary btn-sm btn-add-acao">Adicionar Ação</button>
     `;

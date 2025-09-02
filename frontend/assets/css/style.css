@@ -31,6 +31,7 @@
     --color-primary-lidado: #91b882;
     --color-primary-300:#9c8baf;
     --color-primary-400:#8971f1;
+    --color-primary-500: #120b35;
 }
 
 /* --- Estilos Gerais e Reset --- */
@@ -311,7 +312,10 @@ section {
 .seta {
     height: auto;
     width: 20px;
+    pointer-events: none;
 }
+
+
 
 .btn-seta {
     display: inline-flex;
@@ -471,10 +475,13 @@ section {
     border-radius: 50%;
     filter: blur(100px);
     z-index: 0;
+    pointer-events: none;
 }
 
 .cena-title {
+    font-size: 1.4rem;
     padding-top: 20px;
+    font-weight: 300;
 }
 
 
@@ -541,6 +548,8 @@ section {
     border-radius: 10px;
     padding: 10px 20px;
     margin-bottom: 10px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+
 }
 
 .cena-header {
@@ -563,9 +572,7 @@ section {
     padding-bottom: 20px;
 }
 
-.icon-button {
-    width: 40px;
-}
+
 
 .comodo-nome {
     font-size: 1.3em;
@@ -616,9 +623,10 @@ section {
 }
 
 
-.btn-primary {
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-primary);
+.btn-primary{
+    background-color: var(--color-primary-100);
+    border: 1px solid var(--color-primary-100);
+    
 }
 .btn-primary:hover {
     background-color: transparent;
@@ -652,7 +660,7 @@ section {
     display: none;
 }
 
-.comodo-item {
+.comodo-item , .cena-item{
     transition: all 0.3s ease;
     cursor: pointer;
 }
@@ -665,7 +673,7 @@ section {
 
 .comodo-item.expanded {
     transform: scale(1.03);
-    background: rgba(0,0,0,0.05);
+    /* background: rgba(0,0,0,0.05); */
     margin-bottom: 40px;
 }
 
@@ -675,6 +683,12 @@ section {
     align-items: flex-start;
     transition: all .5s;
     transform: scale(30px);
+}
+
+.cena-item.expanded {
+    transform: scale(1.03);
+    /* background: rgba(0,0,0,0.05); */
+    margin-bottom: 40px;
 }
 
 
@@ -755,10 +769,6 @@ section {
 .titulo-container-disp img {
     width: 40px;
 }
-
-
-
-
 
 
 
@@ -859,8 +869,13 @@ input:checked + .slider:before {
 
 .acoes-container {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 50px;
     margin-bottom: 20px;
+}
+
+.titulo-acoes {
+    border-top: 2px solid var(--color-primary-400);
+    padding-top: 20px;
 }
 
 .form-container-grid {
@@ -868,7 +883,7 @@ input:checked + .slider:before {
     
     gap: 10px;
     align-items: center;
-    padding-top: 40px;
+    padding-top: 100px;
 }
 
 .form-container-grid input,
@@ -928,18 +943,21 @@ input:checked + .slider:before {
 }
 
 /* Estilos para o modo de visualização/edição da ação */
-.acao-item {
-    padding: 8px 10px;
-    border: 1px solid var(--color-primary-300);
-    border-radius: 5px;
-    margin-bottom: 5px;
-    background-color: var(--color-primary);
-    transition: background-color 0.2s ease;
+
+.ctn-acao {
+    width: 100%;
 }
 
-.acao-item:hover {
-    background-color: #e9ecef;
+.acao-item {
+    width: 70%;
+    padding: 15px 10px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    background-color: var(--color-primary-200);
+    transition: background-color 0.2s ease;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
+
 
 .acao-item .view-mode,
 .acao-item .edit-mode {
@@ -951,8 +969,22 @@ input:checked + .slider:before {
     flex-wrap: wrap;
 }
 
-.acao-item .view-mode span {
+.acao-item .edit-mode input,
+.acao-item .edit-mode select {
+    padding: 10px 15px;
+    border: 1px solid var(--color-primary-400);
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.acao-item .edit-mode select.edit-acao-dispositivo-id {
     flex-grow: 1;
+    min-width: 150px;
+}
+
+.acao-item .edit-mode input , .acao-item .edit-mode select{
+    background-color: var(--color-primary-100);
+    border: 2px solid var(--color-primary);
 }
 
 .acao-item .acao-actions {
@@ -961,18 +993,24 @@ input:checked + .slider:before {
     flex-shrink: 0;
 }
 
-.acao-item .edit-mode input,
-.acao-item .edit-mode select {
-    padding: 6px 8px;
-    border: 1px solid var(--cor-borda);
-    border-radius: 4px;
-    font-size: 0.9rem;
+.acao-info {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.title-ordem {
+    margin-bottom: 15px;
 }
 
-.acao-item .edit-mode select.edit-acao-dispositivo-id {
-    flex-grow: 1;
-    min-width: 150px;
+.title-ordem span{
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid var(--color-primary);
+    background-color: var(--color-primary-400);
+    
 }
+
 
 .hidden {
     display: none !important;
@@ -986,10 +1024,11 @@ input:checked + .slider:before {
 }
 
 .btn-secondary {
-    background-color: var(--cor-secundaria);
+    background-color: var(--color-primary-100);
 }
+
 .btn-secondary:hover {
-    background-color: var(--cor-secundaria-hover);
+    background-color: var(--color-primary-400);
 }
 
 /* --- Componentes: Notificações --- */

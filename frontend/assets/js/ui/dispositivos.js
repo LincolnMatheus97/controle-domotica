@@ -48,9 +48,9 @@ export async function renderizarDispositivos(comodoId, container) {
                     </div>
                     <span>${dispositivo.nome}</span>
                     <div class="dispositivo-actions"> 
-                        <button class="btn btn-sm ${classeBotaoToggle} btn-toggle-state"><img class="seta" src="./assets/img/${iconeBotaoToggle}.png" alt="icone ativo ou inativo" title="Ligar dispositivo" class="icon-button"></button>
-                        <button class="btn btn-sm btn-warning"><img class="seta" src="./assets/img/editar.png" alt="icone editar" title="Editar comodo" class="icon-button"></button>
-                        <button class="btn btn-sm btn-danger"><img class="seta" src="./assets/img/excluir.png" alt="icone excluir" title="Excluir comodo" class="icon-button"></button>
+                        <button class="btn btn-sm ${classeBotaoToggle} btn-toggle-state"><img class="seta" src="./assets/img/${iconeBotaoToggle}.png" alt="icone ativo ou inativo" title="Ligar dispositivo"></button>
+                        <button class="btn btn-sm btn-warning"><img class="seta" src="./assets/img/editar.png" alt="icone editar" title="Editar comodo"></button>
+                        <button class="btn btn-sm btn-danger"><img class="seta" src="./assets/img/excluir.png" alt="icone excluir" title="Excluir comodo"></button>
                     </div>
                 </div>
                 `;
