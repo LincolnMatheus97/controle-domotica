@@ -46,22 +46,23 @@ export async function renderizarCenas() {
 
         const statusBadge = cena.ativa ? `<span class="status-badge ativa">Ativa</span>` : `<span class="status-badge inativa">Inativa</span>`;
         const toggleButtonText = cena.ativa ? 'Desativar' : 'Ativar';
+        const iconeBotaoToggle = cena.ativa ? 'ativo' : 'inativo'
 
         const executarDesativado = !cena.ativa || qntAcoes === 0;
 
         cenasElement.innerHTML = `
-            <div class="cena-header" style="width:100%; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+            <div class="cena-header" style="width:100%; display:flex; justify-content:flex-start; align-items:flex-start; cursor:pointer;">
                 <div class="cena-title">
                     <span>${cena.nome}</span>
                     ${statusBadge}
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="ctn-cena" style="display: flex; align-items: center; gap: 10px;">
                     <span class="device-count-badge">${qntAcoes} ações</span>
                     <div class="cena-actions">
-                        <button class="btn btn-sm btn-info btn-toggle-ativa">${toggleButtonText}</button>
+                        <button class="btn btn-sm btn-info btn-toggle-ativa"><img class="seta" src="./assets/img/${iconeBotaoToggle}.png" alt="icone ativo ou inativo" title="Ligar dispositivo" class="icon-button"></button>
                         <button class="btn btn-sm btn-success btn-executar-cena" ${executarDesativado ? 'disabled' : ''}>Executar</button>
-                        <button class="btn btn-sm btn-warning">Editar</button>
-                        <button class="btn btn-sm btn-danger">Excluir</button>
+                        <button class="btn btn-sm btn-warning"><img class="seta" src="./assets/img/editar.png" alt="icone editar" title="Editar comodo" class="icon-button"></button>
+                        <button class="btn btn-sm btn-danger"><img class="seta" src="./assets/img/excluir.png" alt="icone excluir" title="Excluir comodo" class="icon-button"></button>
                     </div>
                 </div>
             </div>

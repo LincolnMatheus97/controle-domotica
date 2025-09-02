@@ -12,22 +12,45 @@ export async function renderizarDispositivos(comodoId, container) {
     if (dispositivos.length === 0) {
         container.innerHTML = '<p>Nenhum dispositivo cadastrado neste cômodo.</p>';
     } else {
+
+        // criar titulo so se ele ainda não existe no container
+        if (!container.querySelector('.titulo-container-disp')) {
+            const containerTituloDispositivo = document.createElement('div');
+            const tituloDispositivo = document.createElement('h2');
+            const iconeDispositivo = document.createElement('img');
+
+            containerTituloDispositivo.className = 'titulo-container-disp';
+            tituloDispositivo.textContent = 'Dispositivos inseridos';
+            iconeDispositivo.src = './assets/img/dispositivo.png';
+            iconeDispositivo.alt = 'icone dispositivo';
+
+            containerTituloDispositivo.appendChild(iconeDispositivo);
+            containerTituloDispositivo.appendChild(tituloDispositivo);
+            container.appendChild(containerTituloDispositivo);
+        }
+
+        //renderiza os dispositivos normal
         dispositivos.forEach(dispositivo => {
             const dispositivoEl = createByElem('div');
             dispositivoEl.className = 'dispositivo-item';
             dispositivoEl.dataset.dispositivoId = dispositivo.id;
 
             const estadoClasse = dispositivo.estado ? 'ligado' : 'desligado';
+            const iconeLampada = dispositivo.estado ? 'lamp-ligado' : 'lamp-desligado'
             const textoBotaoToggle = dispositivo.estado ? 'Desativar' : 'Ativar';
+            const iconeBotaoToggle = dispositivo.estado ? 'ativo' : 'inativo'
             const classeBotaoToggle = dispositivo.estado ? 'btn-secondary' : 'btn-success';
             
             dispositivoEl.innerHTML = `
                 <div class="dispositivo-estado ${estadoClasse}">
+                    <div class='icon-disp'>
+                        <img src="./assets/img/${iconeLampada}.png" alt="icone lampada" width="30px">
+                    </div>
                     <span>${dispositivo.nome}</span>
                     <div class="dispositivo-actions"> 
-                        <button class="btn btn-sm ${classeBotaoToggle} btn-toggle-state">${textoBotaoToggle}</button>
-                        <button class="btn btn-sm btn-warning">Editar</button>
-                        <button class="btn btn-sm btn-danger">Excluir</button>
+                        <button class="btn btn-sm ${classeBotaoToggle} btn-toggle-state"><img class="seta" src="./assets/img/${iconeBotaoToggle}.png" alt="icone ativo ou inativo" title="Ligar dispositivo" class="icon-button"></button>
+                        <button class="btn btn-sm btn-warning"><img class="seta" src="./assets/img/editar.png" alt="icone editar" title="Editar comodo" class="icon-button"></button>
+                        <button class="btn btn-sm btn-danger"><img class="seta" src="./assets/img/excluir.png" alt="icone excluir" title="Excluir comodo" class="icon-button"></button>
                     </div>
                 </div>
                 `;
@@ -120,7 +143,7 @@ function atualizarContadorDispositivos(comodoItem) {
     const countBadge = comodoItem.querySelector('.device-count-badge');
     const deviceItems = comodoItem.querySelectorAll('.dispositivo-item');
     if (countBadge) {
-        countBadge.textContent = `${deviceItems.length} disp.`;
+        countBadge.textContent = `${deviceItems.length} dispositivos`;
     }
 }
 
@@ -131,7 +154,28 @@ async function lidarExcluirDispositivo(id, dispositivoItem) {
         mostrarNotificacao('Dispositivo excluído com sucesso!', 'sucesso');
         dispositivoItem.remove();
         atualizarContadorDispositivos(comodoItem);
+
+        // atualizar mensagem se ha dispositivos inseridos
+        const container = comodoItem.querySelector('.dispositivos-container')
+        const restantes = container.querySelectorAll('.dispositivo-item').length
+
+        if(restantes === 0) {
+            const titulo = container.querySelector('.titulo-container-disp')
+            if(titulo){
+                titulo.remove()
+            }
+
+            if(!container.querySelector('.msg-vazia')){
+                const msg = createByElem('p')
+                msg.className = 'msg-vazia'
+                msg.textContent = 'Nenhum dispositivo cadastrado neste cômodo.'
+                //adicionar como primeiro 
+                container.prepend(msg)
+            }
+        }
+
         await redesenharListaDeCenas();
+
     } else {
         mostrarNotificacao('Falha ao excluir o dispositivo.', 'erro');
     }

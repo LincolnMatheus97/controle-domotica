@@ -45,17 +45,22 @@ export async function renderizarComodos() {
         const qntDispositivos = comodo.dispositivos ? comodo.dispositivos.length : 0;
         
         comodoElement.innerHTML = `
-            <div class="comodo-header" style="width:100%; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
-                <span>${comodo.nome}</span>
+            <div class="comodo-header" style="width:100%; display:flex; cursor:pointer;">
+                <span class="comodo-nome">${comodo.nome}</span>
                 <div style="display: flex; align-items: center;">
-                    <span class="device-count-badge">${qntDispositivos} disp.</span>
+                    <span class="device-count-badge">${qntDispositivos} dispositivos</span>
                     <div class="comodo-actions">
-                        <button class="btn btn-sm btn-warning">Editar</button>
-                        <button class="btn btn-sm btn-danger">Excluir</button>
+                        <button class="btn btn-sm btn-warning">
+                            <img class="seta" src="./assets/img/editar.png" alt="icone editar" title="Editar comodo" class="icon-button">
+                        </button>
+                        <button class="btn btn-sm btn-danger">
+                            <img class="seta" src="./assets/img/excluir.png" alt="icone excluir" title="Excluir comodo" class="icon-button">
+                        </button>
                     </div>
                 </div>
             </div>
             <div class="dispositivos-container"></div>
+            
         `;
         comodosListDiv.appendChild(comodoElement);
     });
