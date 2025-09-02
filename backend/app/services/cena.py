@@ -8,9 +8,11 @@ import time
 class CenaService:
     """Service para gerenciar a lógica de negócio das cenas."""
     
+    # Inicializa o serviço de cena com uma sessão de banco de dados.
     def __init__(self, db: Session):
         self.db = db
     
+    # Cria uma nova cena no banco de dados.
     def criar_cena(self, nome: str, ativa: bool = True) -> Cena:
         # Verifica se o nome da cena já existe antes de criar
         cena_existente = self.db.query(Cena).filter(Cena.nome == nome).first()
@@ -23,12 +25,14 @@ class CenaService:
         self.db.refresh(cena)
         return cena
     
+    # Busca uma cena pelo seu ID.
     def buscar_cena(self, id: int) -> Cena:
         cena = self.db.query(Cena).options(joinedload(Cena.acoes)).filter(Cena.id == id).first()
         if not cena:
             raise ValueError("Cena não encontrado.")
         return cena
         
+    # Atualiza as informações de uma cena existente.
     def atualizar_cena(self, id: int, nome: str = None, ativa: bool = None) -> Cena:
         cena = self.buscar_cena(id)
         if nome is not None:
@@ -39,15 +43,18 @@ class CenaService:
         self.db.refresh(cena)
         return cena
     
+    # Deleta uma cena do banco de dados.
     def deletar_cena(self, id: int) -> bool:
         cena = self.buscar_cena(id)
         self.db.delete(cena)
         self.db.commit()  
         return True
     
+    # Lista todas as cenas cadastradas.
     def listar_cena(self) -> List[Cena]:
         return self.db.query(Cena).options(joinedload(Cena.acoes)).all()
     
+    # Inverte o status de ativação de uma cena.
     def inverter_ativo(self, id: int) -> bool:
         cena = self.buscar_cena(id)
         cena.ativa = not cena.ativa
@@ -110,6 +117,7 @@ class CenaService:
             "detalhes": acoes_executadas
         }
 
+    # Lista todas as ações associadas a uma cena específica.
     def listar_acoes_por_cena(self, cena_id: int):
         cena = self.db.query(Cena).filter(Cena.id == cena_id).first()
         if not cena:
