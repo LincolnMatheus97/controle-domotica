@@ -90,6 +90,9 @@ export async function lidarAcoesDasCenas(event) {
         
         if (cenaAtualizada) {
             mostrarNotificacao(`Cena "${cenaAtualizada.nome}" foi ${cenaAtualizada.ativa ? 'ativada' : 'desativada'}.`, 'ativa');
+            if (cenaAtualizada) {
+                cenaItem.classList.remove('expanded');
+            }
             redesenharListaDeCenas();
         } else {
             mostrarNotificacao('Falha ao alterar o status da cena.', 'erro');
