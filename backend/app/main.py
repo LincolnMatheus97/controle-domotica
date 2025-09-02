@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # Configura o servidor Uvicorn com base no ambiente
     if is_docker:
         # Em ambiente Docker, o host é 0.0.0.0 e o reload é desativado
-        uvicorn.run("app.main:app", host="0.0.0.0", port=8000)
+        uvicorn.run("app.main:app", host="0.0.0.0", port=80)
     else:
         # Fora do Docker, o host é 0.0.0.0, a porta é 8000 e o reload é ativado para desenvolvimento
         uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
