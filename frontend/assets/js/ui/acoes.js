@@ -103,17 +103,33 @@ export async function lidarAddAcao(event) {
         return;
     }
 
+    const todasAcoes = await listarAcoesPorCena(cenaId);
+    const ordemDesejada = parseInt(ordemInput.value);
+    const acaoConflitante = todasAcoes.find(a => a.ordem === ordemDesejada);
+
+    let ordemParaCriar = ordemDesejada;
+    if (acaoConflitante) {
+        const maiorOrdem = Math.max(...todasAcoes.map(a => a.ordem), 0);
+        ordemParaCriar = maiorOrdem + 1;
+    }
+
     const novaAcao = await criarAcao(
         cenaId,
         dispositivoIdInput.value,
         acaoInput.value === 'true',
         intervaloInput.value,
-        ordemInput.value
+        ordemParaCriar
     );
 
     if (novaAcao) {
-        mostrarNotificacao('Ação adicionada com sucesso!', 'sucesso');
-        await redesenharListaDeCenas(); 
+        await trocarOuAtualizarOrdemAcao({
+            cenaId,
+            acaoIdAtual: novaAcao.id,
+            novaOrdem: parseInt(ordemInput.value),
+            dispositivoId: dispositivoIdInput.value,
+            acao: acaoInput.value === 'true',
+            intervalo: intervaloInput.value
+        });
     } else {
         mostrarNotificacao('Falha ao adicionar a ação.', 'erro');
     }
@@ -156,43 +172,53 @@ export async function lidarAcoesDasAcoes(event) {
         const acao = acaoItem.querySelector('.edit-acao-acao').value === 'true';
         const intervalo = acaoItem.querySelector('.edit-acao-intervalo').value;
 
-        const todasAcoes = await listarAcoesPorCena(cenaId);
-        
-        const acaoAtual = todasAcoes.find(a => a.id == acaoIdAtual);
-        const ordemAntiga = acaoAtual.ordem;
-
-        if (novaOrdem === ordemAntiga) {
-            const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
-            if(sucesso) mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
-            else mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
-            await redesenharListaDeCenas();
-            return;
-        }
-
-        const acaoConflitante = todasAcoes.find(a => a.ordem === novaOrdem);
-
-        if (acaoConflitante) {
-            mostrarNotificacao('Trocando ordem das ações...', 'info');
-
-            const [sucessoAcaoAtual, sucessoAcaoConflitante] = await Promise.all([
-                attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId),
-                attAcao(acaoConflitante.id, acaoConflitante.acao, acaoConflitante.intervalo_segundos, ordemAntiga, acaoConflitante.dispositivo_id) // Ação antiga -> ordem antiga
-            ]);
-
-            if (sucessoAcaoAtual && sucessoAcaoConflitante) {
-                mostrarNotificacao('Ordem das ações trocada com sucesso!', 'sucesso');
-            } else {
-                mostrarNotificacao('Ocorreu um erro ao trocar a ordem das ações.', 'erro');
-            }
-
-        } else {
-            const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
-            if (sucesso) {
-                mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
-            } else {
-                mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
-            }
-        }
-        await redesenharListaDeCenas();
+        await trocarOuAtualizarOrdemAcao({
+            cenaId,
+            acaoIdAtual,
+            novaOrdem,
+            dispositivoId,
+            acao,
+            intervalo
+        });
     }
+}
+
+async function trocarOuAtualizarOrdemAcao({ cenaId, acaoIdAtual, novaOrdem, dispositivoId, acao, intervalo }) {
+    const todasAcoes = await listarAcoesPorCena(cenaId);
+
+    const acaoAtual = todasAcoes.find(a => a.id == acaoIdAtual);
+    const ordemAntiga = acaoAtual ? acaoAtual.ordem : null;
+
+    if (ordemAntiga !== null && novaOrdem === ordemAntiga) {
+        const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
+        if (sucesso) mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
+        else mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
+        await redesenharListaDeCenas();
+        return;
+    }
+
+    const acaoConflitante = todasAcoes.find(a => a.ordem === novaOrdem);
+
+    if (acaoConflitante) {
+        mostrarNotificacao('Trocando ordem das ações...', 'info');
+
+        const [sucessoAcaoAtual, sucessoAcaoConflitante] = await Promise.all([
+            attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId),
+            attAcao(acaoConflitante.id, acaoConflitante.acao, acaoConflitante.intervalo_segundos, ordemAntiga, acaoConflitante.dispositivo_id)
+        ]);
+
+        if (sucessoAcaoAtual && sucessoAcaoConflitante) {
+            mostrarNotificacao('Ordem das ações trocada com sucesso!', 'sucesso');
+        } else {
+            mostrarNotificacao('Ocorreu um erro ao trocar a ordem das ações.', 'erro');
+        }
+    } else {
+        const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
+        if (sucesso) {
+            mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
+        } else {
+            mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
+        }
+    }
+    await redesenharListaDeCenas();
 }
