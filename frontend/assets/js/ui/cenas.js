@@ -59,10 +59,10 @@ export async function renderizarCenas() {
                 <div class="ctn-cena" style="display: flex; align-items: center; gap: 10px;">
                     <span class="device-count-badge">${qntAcoes} ações</span>
                     <div class="cena-actions">
-                        <button class="btn btn-sm btn-info btn-toggle-ativa"><img class="seta" src="./assets/img/${iconeBotaoToggle}.png" alt="icone ativo ou inativo" title="Ligar dispositivo" class="icon-button"></button>
+                        <button class="btn btn-sm btn-info btn-toggle-ativa"><img class="seta" src="./assets/img/${iconeBotaoToggle}.png" alt="icone ativo ou inativo" title="Ligar dispositivo"></button>
                         <button class="btn btn-sm btn-success btn-executar-cena" ${executarDesativado ? 'disabled' : ''}>Executar</button>
-                        <button class="btn btn-sm btn-warning"><img class="seta" src="./assets/img/editar.png" alt="icone editar" title="Editar comodo" class="icon-button"></button>
-                        <button class="btn btn-sm btn-danger"><img class="seta" src="./assets/img/excluir.png" alt="icone excluir" title="Excluir comodo" class="icon-button"></button>
+                        <button class="btn btn-sm btn-warning"><img class="seta" src="./assets/img/editar.png" alt="icone editar" title="Editar comodo"></button>
+                        <button class="btn btn-sm btn-danger"><img class="seta" src="./assets/img/excluir.png" alt="icone excluir" title="Excluir comodo"></button>
                     </div>
                 </div>
             </div>
