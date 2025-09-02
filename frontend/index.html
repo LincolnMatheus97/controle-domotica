@@ -1,37 +1,155 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Domótica</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
-    <header>
-        <h1>Controle de Domótica</h1>
+    <header id="header">
+        <!-- <img src="./imgs/home.png" alt="icone casa" width="35px" height="35px"> -->
+        <div class="apresentacao">
+            <div class="titulo">
+                <h1>
+                    Controle
+                    de <br>
+                    <span class="word-domotica">Domotica</span>
+                </h1>
+                <div class="linha-titulo"></div>
+                <p>
+                    Automatize sua casa de forma simples e inteligente.
+                    Controle cômodos, personalize cenas e deixe a
+                    tecnologia cuidar do seu conforto com apenas um clique.
+                </p>
+            </div>
+
+            <div class="container-links">
+                <div class="ctn-card">
+                    <div class="card one">
+                        <div class="img">
+                            <span>Comodos</span>
+                        </div>
+                        <div class="content">
+                            <span class="title">Os comodos da casa</span>
+                            <p class="desc">
+                                Adicione e controle seus dispositivos em cada ambiente. Ligue, desligue, edite ou remova
+                                com facilidade
+                                e veja quantos estão ativos em tempo real.</p>
+                            <a href="#comodos-section">Ir para comodos</a>
+                        </div>
+                        <div class="arrow">
+                            <span><img src="./assets/img/indicador-seta.png" alt="" width="20px"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ctn-card">
+                    <div class="card true">
+                        <div class="img">
+                            <span>Cenas</span>
+                        </div>
+                        <div class="content">
+                            <span class="title">Os cenas da casa</span>
+                            <p class="desc">
+                                Crie combinações inteligentes de dispositivos. Programe a ordem, os intervalos e ative
+                                tudo de uma só vez para
+                                transformar o ambiente do seu jeito.</p>
+                            <a href="#cenas-section">Ir para cenas</a>
+                        </div>
+                        <div class="arrow">
+                            <span><img src="./assets/img/indicador-seta.png" alt="" width="20px"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-animacao">
+            <duv class="bolhas">
+                <span style="--i:11"></span>
+                <span style="--i:17"></span>
+                <span style="--i:25"></span>
+                <span style="--i:14"></span>
+                <span style="--i:9"></span>
+                <span style="--i:2"></span>
+                <span style="--i:28"></span>
+                <span style="--i:16"></span>
+                <span style="--i:22"></span>
+                <span style="--i:4"></span>
+                <span style="--i:13"></span>
+                <span style="--i:27"></span>
+                <span style="--i:17"></span>
+                <span style="--i:9"></span>
+                <span style="--i:15"></span>
+                <span style="--i:24"></span>
+                <span style="--i:12"></span>
+                <span style="--i:26"></span>
+                <span style="--i:31"></span>
+                <span style="--i:3"></span>
+                <span style="--i:29"></span>
+                <span style="--i:5"></span>
+                <span style="--i:19"></span>
+                <span style="--i:21"></span>
+                <span style="--i:30"></span>
+                <span style="--i:13"></span>
+                <span style="--i:28"></span>
+            </duv>
+        </div>
     </header>
 
     <main>
-        <section id="comodos-section">
-            <h2>Cômodos</h2>
-            <div id="comodos-list">
+        <section class="esconder" id="comodos-section">
+            <a href="#header" class="btn-seta"><img class="seta" src="./assets/img/pra-cima.png"
+                    alt="seta para cima"></a>
+            <div class="container-comodos">
+                <h1>Cômodos</h1>
+                <p>Clique nos comodos para adicionar dispositivos!</p>
+                <div class="ctn-comodos-input-list">
+                    <div class="formulario">
+                        <div class="add-comodos-container">
+                            <h2>Adicionar comodos</h2>
+                            <div class="form">
+                                <span>Nome</span>
+                                <input type="text" id="novo-comodo-nome" placeholder="Digite o nome">
+                                <button id="btn-add-comodo">Adicionar Cômodo</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="comodos-list">
 
+                    </div>
+                </div>
             </div>
-            <div class="form-container">
-                <input type="text" id="novo-comodo-nome" placeholder="Nome do novo cômodo">
-                <button id="btn-add-comodo" class="btn btn-primary">Adicionar Cômodo</button>
-            </div>
+            <a href="#cenas-section" class="btn-seta"><img class="seta" src="./assets/img/seta-para-baixo.png"
+                    alt=""></a>
         </section>
 
-        <section id="cenas-section">
-            <h2>Cenas</h2>
-            <div id="cenas-list">
+        <section class="esconder" id="cenas-section">
+            <a href="#comodos-section" class="btn-seta"><img class="seta" src="./assets/img/pra-cima.png"
+                    alt="seta para cima"></a>
+            <div class="container-cenas">
+                <h1>Cenas</h1>
+                <p>Clique nas cenas para adicionar novos dispositivos!</p>
+                <div id="cenas-list">
 
+                </div>
+                <div class="form-container-cenas">
+                    <h2>Adicionar cenas</h2>
+                    <span>Nome</span>
+                    <input type="text" id="nova-cena-nome" placeholder="Nome do nova cena">
+                    <button id="btn-add-cena" class="btn btn-primary">Adicionar Cena</button>
+                </div>
             </div>
-            <div class="form-container">
-                <input type="text" id="nova-cena-nome" placeholder="Nome do nova cena">
-                <button id="btn-add-cena" class="btn btn-primary">Adicionar Cena</button>
-            </div>
+            <a href="#sobre-section" class="btn-seta"><img class="seta" src="./assets/img/seta-para-baixo.png"
+                    alt=""></a>
+        </section>
+        <section class="esconder" id="sobre-section">
+            <a href="#cenas-section" class="btn-seta">Voltar ao início
+
+            </a>
+            <h2>Sobre</h2>
         </section>
 
     </main>
@@ -39,6 +157,7 @@
     <div id="notificacao-container"></div>
     <div id="confirm-modal-overlay" class="hidden">
         <div id="confirm-modal">
+            <img src="./assets/img/remove.png" alt="Deletar" width="40px">
             <h2>Confirmação</h2>
             <p id="modal-message">Você tem certeza?</p>
             <div class="modal-actions">
@@ -49,5 +168,7 @@
     </div>
 
     <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/script.js"></script>
 </body>
+
 </html>
