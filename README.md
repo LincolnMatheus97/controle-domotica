@@ -2,7 +2,9 @@
 
 Este repositório foi criado para a entrega da atividade "Projeto de Diagnóstico: Controle de Domótica". Aqui você encontrará o código-fonte e outros artefatos relacionados ao projeto.
 
---- 
+---
+## Grupo composto por: João Paulo Lopes da Silva, Lincoln Matheus Costa Campelo Pinho e Natiele Grazielly Ferreira Santana.
+---
 # PDF da Atividade
 
 ![Pagina 1 do pdf](https://imgur.com/0po4bBo.png).
