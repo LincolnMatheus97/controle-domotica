@@ -159,6 +159,7 @@ async function lidarExcluirComodo(id) {
     if (sucesso) {
         mostrarNotificacao('Cômodo excluído com sucesso!', 'sucesso');
         redesenharListaDeComodos();
+        await redesenharListaDeCenas();
     } else {
         mostrarNotificacao('Falha ao excluir o cômodo.', 'erro');
     }
