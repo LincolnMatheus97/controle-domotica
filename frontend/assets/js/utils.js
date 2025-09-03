@@ -66,6 +66,6 @@ export function abrirModalConfirmacao(message) {
     });
 }
 
-export function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+export function travarUI(travado) {
+    document.body.classList.toggle('executando-cena', travado);
 }
