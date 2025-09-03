@@ -4,15 +4,19 @@ import { lidarAcoesDosDispositivos, lidarAddDispositivo } from "./ui/dispositivo
 import { lidarAcoesDasCenas, lidarAddCena, renderizarCenas } from "./ui/cenas.js";
 import { lidarAcoesDasAcoes, lidarAddAcao } from "./ui/acoes.js";
 
-
+/**
+ * @description Função para inicializar a aplicação
+*/
 function init() {
     console.log('Aplicacao de Domotica iniciada!');
 
+    // Elementos da interface
     const addComodoButton = getById('btn-add-comodo');
     const comodosList = getById('comodos-list');
     const addCenaButton = getById('btn-add-cena');
     const cenaList = getById('cenas-list');
 
+    // Listeners para Adicionar Cômodos e Cenas
     addComodoButton.addEventListener('click', lidarAddComodo);
     addCenaButton.addEventListener('click', lidarAddCena);
 
@@ -55,4 +59,5 @@ function init() {
     renderizarCenas();
 }
 
+// Inicializa a aplicação quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', init);
