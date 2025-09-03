@@ -1,6 +1,6 @@
 import { listarAcoesPorCena } from "../api/acoes.js";
 import { attCena, criarCena, excluirCena, executarCena, invetEstadoCena, listarCenas } from "../api/cenas.js";
-import { getById, createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
+import { getById, createByElem, mostrarNotificacao, abrirModalConfirmacao, travarUI } from "../utils.js";
 import { renderizarAcoes } from "./acoes.js";
 import { redesenharListaDeComodos } from "./comodos.js";
 
@@ -103,26 +103,42 @@ export async function lidarAcoesDasCenas(event) {
     if (target.classList.contains('btn-executar-cena')) {
         event.stopPropagation();
 
-        document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+        travarUI(true);
 
         const acoesDaCena = await listarAcoesPorCena(cenaId);
         const tempoTotalSegundos = acoesDaCena.reduce((soma, acao) => soma + (acao.intervalo_segundos || 0), 0);
         const tempoTotalMs = tempoTotalSegundos * 1000;
         const nomeCena = cenaItem.querySelector('.cena-title span').textContent;
+        
 
         mostrarNotificacao(`Executando a cena "${nomeCena}"... (Duração: ${tempoTotalSegundos}s)`, 'info', tempoTotalMs);
 
-        const resultado = await executarCena(cenaId);
+        try {
+            const resultado = await executarCena(cenaId);
 
-        if (resultado.sucesso) {
-            mostrarNotificacao(`Cena executada! ${resultado.dispositivos_afetados.length} dispositivos alterados.`, 'sucesso');
-            await redesenharListaDeComodos();
-        } else {
-            mostrarNotificacao(`Falha ao executar: ${resultado.mensagem}`, 'erro');
+            if (resultado.sucesso) {
+                const acoesDaCena = await listarAcoesPorCena(cenaId);
+                const dispositivosEnvolvidos = new Set(acoesDaCena.map(a => a.dispositivo_id));
+                const totalDispositivosEnvolvidos = dispositivosEnvolvidos.size;
+
+                const totalDispositivosAlterados = resultado.dispositivos_afetados.length;
+
+                mostrarNotificacao(
+                    `Cena executada! ${totalDispositivosAlterados} de ${totalDispositivosEnvolvidos} dispositivos foram alterados.`,
+                    'sucesso'
+                );
+                await redesenharListaDeComodos();
+            } else {
+                mostrarNotificacao(`Falha ao executar: ${resultado.mensagem}`, 'erro');
+            }
+        } catch (error) {
+            console.error("Erro ao executar cena:", error);
+            mostrarNotificacao('Ocorreu um erro inesperado ao executar a cena.', 'erro');
+        } finally {
+            await redesenharListaDeCenas(); 
+            travarUI(false);
         }
 
-        document.querySelectorAll('.btn').forEach(btn => btn.disabled = false);
-        
         return;
     }
 
