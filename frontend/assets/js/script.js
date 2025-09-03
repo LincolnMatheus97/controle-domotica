@@ -1,5 +1,7 @@
-
-const myObsever = new IntersectionObserver((entries) => {
+/**
+ * @description Função para observar elementos na tela
+*/
+const myObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
         if (entry.isIntersecting) {
             entry.target.classList.add('mostrar')
@@ -11,4 +13,4 @@ const myObsever = new IntersectionObserver((entries) => {
 
 const elements = document.querySelectorAll('.esconder');
 
-elements.forEach((el) => myObsever.observe(el));
+elements.forEach((el) => myObserver.observe(el));
