@@ -88,8 +88,6 @@ export async function renderizarAcoes(cenaId, container) {
         return `<option value="${d.id}">${d.nome} (${comodoNome})</option>`;
     }).join('');
 
-    
-    // ALTEREI ISSO AQUI
     formAdicionar.innerHTML = `
         <h2>Adicionar ação</h2>
         <span>Número de ordem</span>
@@ -135,8 +133,8 @@ export async function lidarAddAcao(event) {
 
     let ordemParaCriar = ordemDesejada;
     if (acaoConflitante) {
-        const maiorOrdem = Math.max(...todasAcoes.map(a => a.ordem), 0);
-        ordemParaCriar = maiorOrdem + 1;
+        await empilharOrdenacao(cenaId, ordemDesejada,'+');
+        mostrarNotificacao(`Ordem ${ordemDesejada} já existe. As ações foram reordenadas.`, 'info', 4000);
     }
 
     const novaAcao = await criarAcao(
@@ -148,14 +146,8 @@ export async function lidarAddAcao(event) {
     );
 
     if (novaAcao) {
-        await trocarOuAtualizarOrdemAcao({
-            cenaId,
-            acaoIdAtual: novaAcao.id,
-            novaOrdem: parseInt(ordemInput.value),
-            dispositivoId: dispositivoIdInput.value,
-            acao: acaoInput.value === 'true',
-            intervalo: intervaloInput.value
-        });
+        mostrarNotificacao('Ação adicionada com sucesso!', 'sucesso');
+        await redesenharListaDeCenas();
     } else {
         mostrarNotificacao('Falha ao adicionar a ação.', 'erro');
     }
@@ -223,28 +215,38 @@ async function trocarOuAtualizarOrdemAcao({ cenaId, acaoIdAtual, novaOrdem, disp
         return;
     }
 
-    const acaoConflitante = todasAcoes.find(a => a.ordem === novaOrdem);
+    mostrarNotificacao(`Ordem ${novaOrdem} já existe. As ações foram reordenadas.`, 'info', 4000);
 
-    if (acaoConflitante) {
-        mostrarNotificacao('Trocando ordem das ações...', 'info');
+    if (novaOrdem < ordemAntiga) {
+        await empilharOrdenacao(cenaId, novaOrdem, '+');
+    } else if (novaOrdem > ordemAntiga) {
+        await empilharOrdenacao(cenaId, ordemAntiga, '-', novaOrdem);
+    }
 
-        const [sucessoAcaoAtual, sucessoAcaoConflitante] = await Promise.all([
-            attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId),
-            attAcao(acaoConflitante.id, acaoConflitante.acao, acaoConflitante.intervalo_segundos, ordemAntiga, acaoConflitante.dispositivo_id)
-        ]);
-
-        if (sucessoAcaoAtual && sucessoAcaoConflitante) {
-            mostrarNotificacao('Ordem das ações trocada com sucesso!', 'sucesso');
-        } else {
-            mostrarNotificacao('Ocorreu um erro ao trocar a ordem das ações.', 'erro');
-        }
+    const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
+    if (sucesso) {
+        mostrarNotificacao('Ação atualizada e ordens ajustadas!', 'sucesso');
     } else {
-        const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
-        if (sucesso) {
-            mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
-        } else {
-            mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
-        }
+        mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
     }
     await redesenharListaDeCenas();
+}
+
+async function empilharOrdenacao(cenaId, ordemInicial, sinal, ordemfinal = null) {
+    const todasAcoes = await listarAcoesPorCena(cenaId);
+    if (sinal === '+') {
+        const afetadas = todasAcoes
+            .filter(a => a.ordem >= ordemInicial)
+            .sort((a, b) => b.ordem - a.ordem);
+        for (const acao of afetadas) {
+            await attAcao(acao.id, acao.acao, acao.intervalo_segundos, acao.ordem + 1, acao.dispositivo_id);
+        }
+    } else if (sinal === '-') {
+        const afetadas = todasAcoes
+            .filter(a => a.ordem > ordemInicial && a.ordem <= ordemfinal)
+            .sort((a, b) => a.ordem - b.ordem);
+        for (const acao of afetadas) {
+            await attAcao(acao.id, acao.acao, acao.intervalo_segundos, acao.ordem - 1, acao.dispositivo_id);
+        }
+    }
 }
