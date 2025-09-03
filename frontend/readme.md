@@ -81,3 +81,27 @@ A lógica do JavaScript foi dividida em módulos com responsabilidades bem defin
 - **/ui/**: Contém os módulos responsáveis por toda a manipulação do DOM. Eles recebem os dados vindos da camada de api e os "desenham" na tela, criando, atualizando e removendo elementos HTML, além de lidar com os eventos de interação do usuário.
 - **main.js**: É o "maestro" da aplicação. Inicializa o sistema, importa as funções necessárias dos módulos de ui, adiciona os event listeners globais aos elementos da página e chama as funções para carregar os dados iniciais.
 - **utils.js**: Um conjunto de ferramentas com funções genéricas e reutilizáveis que podem ser necessárias em várias partes do projeto, como `getById`, `criarElemento`, `mostrarNotificacao` e `abrirModalConfirmacao`
+
+## Documentação do Código JavaScript
+
+Todos os arquivos JavaScript do frontend estão comentados utilizando o padrão JSDoc, permitindo a geração automática de documentação técnica dos módulos, funções e parâmetros.
+
+### Como Gerar a Documentação
+
+1. **Instale o JSDoc**  
+   No terminal, execute:
+   ```bash
+   npm install -g jsdoc
+   ```
+
+2. **Gere a documentação**  
+   Ainda no terminal, dentro da pasta do projeto, execute:
+   ```bash
+   jsdoc .\frontend\assets\js\ui\ .\frontend\assets\js\main.js .\frontend\assets\js\script.js .\frontend\assets\js\utils.js --destination .\frontend\JSDoc
+   ```
+   Isso criará a documentação em HTML na pasta `frontend/JSDoc`.
+
+3. **Acesse a documentação**  
+   Abra o arquivo `index.html` dentro da pasta `frontend/docs` para visualizar a documentação gerada dos módulos JavaScript do frontend.
+
+---

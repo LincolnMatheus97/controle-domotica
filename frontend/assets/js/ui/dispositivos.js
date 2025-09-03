@@ -1,7 +1,16 @@
+/**
+ * Arquivo de manipulação de DOM para interface de usuário para os dispositivos
+*/
+
 import { createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
 import { attDispositivo, attEstadoDispositivo, criarDispositivo, excluirDispositivo, listarDispositivosPorComodo } from "../api/dispositivos.js";
 import { redesenharListaDeCenas } from "./cenas.js";
 
+/**
+ * @description Função para renderizar a lista de dispositivos em um cômodo
+ * @param {string} comodoId - ID do cômodo
+ * @param {HTMLElement} container - Container onde os dispositivos serão renderizados
+*/
 export async function renderizarDispositivos(comodoId, container) {
     container.innerHTML = '<p>Carregando Dispositivos...</p>';
 
@@ -9,11 +18,12 @@ export async function renderizarDispositivos(comodoId, container) {
 
     container.innerHTML = '';
 
+    // Verifica se existem dispositivos
     if (dispositivos.length === 0) {
         container.innerHTML = '<p>Nenhum dispositivo cadastrado neste cômodo.</p>';
     } else {
 
-        // criar titulo so se ele ainda não existe no container
+        // Criar titulo so se ele ainda não existe no container
         if (!container.querySelector('.titulo-container-disp')) {
             const containerTituloDispositivo = document.createElement('div');
             const tituloDispositivo = document.createElement('h2');
@@ -29,7 +39,7 @@ export async function renderizarDispositivos(comodoId, container) {
             container.appendChild(containerTituloDispositivo);
         }
 
-        //renderiza os dispositivos normal
+        // Renderiza os dispositivos normal
         dispositivos.forEach(dispositivo => {
             const dispositivoEl = createByElem('div');
             dispositivoEl.className = 'dispositivo-item';
@@ -58,6 +68,7 @@ export async function renderizarDispositivos(comodoId, container) {
         });
     }
 
+    // Formulário para adicionar novo dispositivo
     const formAdicionar = createByElem('div');
     formAdicionar.className = 'form-container';
     formAdicionar.style.marginTop = '15px';
@@ -68,18 +79,28 @@ export async function renderizarDispositivos(comodoId, container) {
     container.appendChild(formAdicionar);
 }
 
+/**
+ * @description Função para desativar o modo de edição de um dispositivo
+ * @param {HTMLElement} dispositivoItem - O item do dispositivo a ser desativado
+*/
 function desativarModoEdicao(dispositivoItem) {
+    // Remove o formulário de edição, se existir
     const formEdicao = dispositivoItem.querySelector('.form-container.dispositivo-estado-edicao');
     if (formEdicao) {
         formEdicao.remove();
     }
 
+    // Restaura o estado original
     const estadoDiv = dispositivoItem.querySelector('.dispositivo-estado');
     if (estadoDiv) {
         estadoDiv.style.display = 'flex';
     }
 }
 
+/**
+ * @description Função para lidar com as ações dos dispositivos
+ * @param {Event} event - O evento de clique
+*/
 export async function lidarAcoesDosDispositivos(event) {
     const target = event.target;
     const dispositivoItem = target.closest('.dispositivo-item');
@@ -87,26 +108,19 @@ export async function lidarAcoesDosDispositivos(event) {
 
     const dispositivoId = dispositivoItem.dataset.dispositivoId;
 
-    if (target.classList.contains('toggle-estado')) {
-        const novoEstado = target.checked;
-        const sucesso = await attEstadoDispositivo(dispositivoId, novoEstado);
-        if (!sucesso) {
-            mostrarNotificacao('Falha ao alterar o estado do dispositivo.', 'erro');
-            target.checked = !novoEstado;
-        }
-        return;
-    }
-
+    // Desativar modo de edição
     if (target.classList.contains('btn-secondary') && target.closest('.dispositivo-estado-edicao')) {
         desativarModoEdicao(dispositivoItem);
         return;
     }
 
+    // Salvar edição
     if (target.classList.contains('btn-success') && target.closest('.dispositivo-estado-edicao')) {
         lidarSalvarEdicao(dispositivoItem, dispositivoId);
         return;
     }
 
+    // Alternar estado do dispositivo ao clicar no botão de edição
     if (target.classList.contains('btn-toggle-state')) {
         const estadoDiv = dispositivoItem.querySelector('.dispositivo-estado');
         const isLigado = estadoDiv.classList.contains('ligado');
@@ -114,6 +128,7 @@ export async function lidarAcoesDosDispositivos(event) {
 
         const sucesso = await attEstadoDispositivo(dispositivoId, novoEstado);
 
+        // Atualiza a interface com base no novo estado
         if (sucesso) {
             mostrarNotificacao(`Dispositivo ${novoEstado ? 'ativado' : 'desativado'} com sucesso!`, 'sucesso');
             const comodoItem = dispositivoItem.closest('.comodo-item');
@@ -126,6 +141,7 @@ export async function lidarAcoesDosDispositivos(event) {
         return;
     }
 
+    // Excluir dispositivo
     if (target.classList.contains('btn-danger')) {
         const confirmado = await abrirModalConfirmacao("Tem certeza que deseja excluir esse dispositivo? Ele será removido permanentemente.");
         if (confirmado) {
@@ -133,11 +149,16 @@ export async function lidarAcoesDosDispositivos(event) {
         }
     }
 
+    // Ativar modo de edição
     if (target.classList.contains('btn-warning')) {
         ativarModoEdicao(dispositivoItem);
     }
 }
 
+/**
+ * @description Função para atualizar o contador de dispositivos em um cômodo
+ * @param {HTMLElement} comodoItem - O item do cômodo cujo contador deve ser atualizado
+*/
 function atualizarContadorDispositivos(comodoItem) {
     if (!comodoItem) return;
     const countBadge = comodoItem.querySelector('.device-count-badge');
@@ -147,6 +168,12 @@ function atualizarContadorDispositivos(comodoItem) {
     }
 }
 
+/**
+ * @description Função para lidar com a exclusão de um dispositivo
+ * @param {string} id - O ID do dispositivo a ser excluído
+ * @param {HTMLElement} dispositivoItem - O item do dispositivo a ser excluído
+ * @returns {Promise<void>}
+*/
 async function lidarExcluirDispositivo(id, dispositivoItem) {
     const comodoItem = dispositivoItem.closest('.comodo-item');
     const sucesso = await excluirDispositivo(id);
@@ -155,21 +182,23 @@ async function lidarExcluirDispositivo(id, dispositivoItem) {
         dispositivoItem.remove();
         atualizarContadorDispositivos(comodoItem);
 
-        // atualizar mensagem se ha dispositivos inseridos
+        // Atualizar mensagem se ha dispositivos inseridos
         const container = comodoItem.querySelector('.dispositivos-container')
         const restantes = container.querySelectorAll('.dispositivo-item').length
 
+        // Atualizar título se não houver mais dispositivos
         if(restantes === 0) {
             const titulo = container.querySelector('.titulo-container-disp')
             if(titulo){
                 titulo.remove()
             }
 
+            // Adicionar mensagem de "nenhum dispositivo"
             if(!container.querySelector('.msg-vazia')){
                 const msg = createByElem('p')
                 msg.className = 'msg-vazia'
                 msg.textContent = 'Nenhum dispositivo cadastrado neste cômodo.'
-                //adicionar como primeiro 
+                // Adicionar como primeiro
                 container.prepend(msg)
             }
         }
@@ -181,12 +210,17 @@ async function lidarExcluirDispositivo(id, dispositivoItem) {
     }
 }
 
+/**
+ * @description Função para ativar o modo de edição de um dispositivo
+ * @param {HTMLElement} dispositivoItem - O item do dispositivo a ser editado
+*/
 function ativarModoEdicao(dispositivoItem) {
     const estadoDiv = dispositivoItem.querySelector('.dispositivo-estado');
     const nomeAtual = estadoDiv.querySelector('span').textContent;
 
     estadoDiv.style.display = 'none'; 
 
+    // Criar formulário de edição
     const formEdicao = createByElem('div');
     formEdicao.className = 'form-container dispositivo-estado-edicao';
     formEdicao.style.padding = '10px 15px';
@@ -202,15 +236,23 @@ function ativarModoEdicao(dispositivoItem) {
     formEdicao.querySelector('input').focus();
 }
 
+/**
+ * @description Função para lidar com a confirmação da edição de um dispositivo
+ * @param {HTMLElement} dispositivoItem - O item do dispositivo a ser editado
+ * @param {string} id - O ID do dispositivo a ser editado
+ * @returns {Promise<void>}
+*/
 async function lidarSalvarEdicao(dispositivoItem, id) {
     const input = dispositivoItem.querySelector('input');
     const novoNome = input.value.trim();
 
+    // Verificar se o novo nome é válido
     if (!novoNome) {
         mostrarNotificacao('O nome do dispositivo não pode ser vazio.', 'erro');
         return;
     }
 
+    // Atualizar dispositivo
     const dispositivoAtualizado = await attDispositivo(id, novoNome);
     if (dispositivoAtualizado) {
         mostrarNotificacao('Dispositivo atualizado com sucesso!', 'sucesso');
@@ -225,6 +267,11 @@ async function lidarSalvarEdicao(dispositivoItem, id) {
     }
 }
 
+/**
+ * @description Função para lidar com a adição de um novo dispositivo
+ * @param {Event} event - O evento de clique
+ * @returns {Promise<void>}
+*/
 export async function lidarAddDispositivo(event) {
     const target = event.target;
     const comodoItem = target.closest('.comodo-item');
@@ -234,17 +281,20 @@ export async function lidarAddDispositivo(event) {
     const inputNome = container.querySelector('.novo-dispositivo-nome');
     const nomeDispositivo = inputNome.value.trim();
 
+    // Verificar se o nome do dispositivo é válido
     if (!nomeDispositivo) {
         mostrarNotificacao('Por favor, digite o nome do dispositivo.', 'erro');
         return;
     }
 
+    // Criar dispositivo
     const novoDispositivo = await criarDispositivo(comodoId, nomeDispositivo);
-    
+
+    // Verificar se o dispositivo foi criado com sucesso
     if (novoDispositivo) {
         mostrarNotificacao('Dispositivo adicionado com sucesso!', 'sucesso');
         await renderizarDispositivos(comodoId, container);
-        await redesenharListaDeCenas();
+        await redesenharListaDeCenas(); // Atualiza a lista de cenas
         atualizarContadorDispositivos(comodoItem);
     } else {
         mostrarNotificacao('Falha ao adicionar o dispositivo.', 'erro');

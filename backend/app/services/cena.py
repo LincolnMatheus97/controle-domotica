@@ -69,43 +69,42 @@ class CenaService:
         if not cena.ativa:
             raise ValueError("Cena não está ativa")
         
-        # Buscar todas as ações da cena ordenadas por ordem
-        acoes = self.db.query(Acao).filter(
-            Acao.cena_id == id
-        ).order_by(Acao.ordem).all()
+        acoes = self.db.query(Acao).filter(Acao.cena_id == id).order_by(Acao.ordem).all()
         
         if not acoes:
             raise ValueError("Cena não possui ações cadastradas")
         
         acoes_executadas = []
-        dispositivos_afetados = []
+        dispositivos_realmente_afetados = set()
         
         for acao in acoes:
-            # Buscar o dispositivo
-            dispositivo = self.db.query(Dispositivo).filter(
-                Dispositivo.id == acao.dispositivo_id
-            ).first()
+            # Carrega o dispositivo e seu cômodo relacionado em uma única consulta para eficiência
+            dispositivo = self.db.query(Dispositivo).options(
+                joinedload(Dispositivo.comodo)
+            ).filter(Dispositivo.id == acao.dispositivo_id).first()
             
             if not dispositivo:
-                continue  
+                continue
+
+            # Cria um identificador único e descritivo para o dispositivo
+            comodo_nome = dispositivo.comodo.nome if dispositivo.comodo else "Cômodo Desconhecido"
+            identificador_unico = f"{dispositivo.nome} ({comodo_nome})"
+
+            estado_anterior = dispositivo.estado
+            novo_estado = acao.acao
             
-            # Executar a ação
-            if acao.acao == True:
-                dispositivo.estado = True
-            elif acao.acao == False:
-                dispositivo.estado = False
-            
-            self.db.commit()
-            
+            # Adiciona à lista de detalhes de qualquer forma
             acoes_executadas.append({
-                "acao": acao.acao,
-                "dispositivo": dispositivo.nome
+                "acao": "Ligar" if novo_estado else "Desligar",
+                "dispositivo": identificador_unico
             })
+
+            if estado_anterior != novo_estado:
+                dispositivo.estado = novo_estado
+                self.db.commit()
+                # Adiciona o identificador único ao set
+                dispositivos_realmente_afetados.add(identificador_unico)
             
-            if dispositivo.nome not in dispositivos_afetados:
-                dispositivos_afetados.append(dispositivo.nome)
-            
-            # Aguardar intervalo se especificado
             if acao.intervalo_segundos:
                 time.sleep(acao.intervalo_segundos)
         
@@ -113,7 +112,7 @@ class CenaService:
             "sucesso": True,
             "cena_executada": cena.nome,
             "acoes_executadas": len(acoes_executadas),
-            "dispositivos_afetados": dispositivos_afetados,
+            "dispositivos_afetados": list(dispositivos_realmente_afetados),
             "detalhes": acoes_executadas
         }
 

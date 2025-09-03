@@ -1,20 +1,30 @@
+/**
+ * Arquivo de manipulação de DOM para interface de usuário para as cenas
+*/
+
 import { listarAcoesPorCena } from "../api/acoes.js";
-import { attCena, criarCena, excluirCena, executarCena, invetEstadoCena, listarCenas } from "../api/cenas.js";
-import { getById, createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
+import { attCena, criarCena, excluirCena, executarCena, invertEstadoCena, listarCenas } from "../api/cenas.js";
+import { getById, createByElem, mostrarNotificacao, abrirModalConfirmacao, travarUI } from "../utils.js";
 import { renderizarAcoes } from "./acoes.js";
 import { redesenharListaDeComodos } from "./comodos.js";
 
 const cenasListDiv = getById('cenas-list');
 const novaCenaInput = getById('nova-cena-nome');
 
+/**
+ * @description Função para redesenhar a lista de cenas
+*/
 export async function redesenharListaDeCenas() {
+    // Obter IDs das cenas expandidas
     const idsExpandidos = new Set();
     document.querySelectorAll('.cena-item.expanded').forEach(item => {
         idsExpandidos.add(item.dataset.cenaId);
     });
 
+    // Renderizar a lista de cenas
     await renderizarCenas();
 
+    // Expandir as cenas que estavam expandidas anteriormente
     if (idsExpandidos.size > 0) {
         idsExpandidos.forEach(id => {
             const cenasParaExpandir = cenasListDiv.querySelector(`.cena-item[data-cena-id='${id}']`);
@@ -24,32 +34,37 @@ export async function redesenharListaDeCenas() {
                 renderizarAcoes(id, container);
             }
         });
-    } 
+    }
 }
 
+/**
+ * @description Função para renderizar as cenas
+*/
 export async function renderizarCenas() {
     console.log("Renderizando cenas...");
     const cenas = await listarCenas();
     const cenasListDiv = getById('cenas-list');
     cenasListDiv.innerHTML = '';
 
+    // Verifica se existem cenas
     if (cenas.length === 0) {
         cenasListDiv.innerHTML = '<p>Nenhuma cena cadastrada ainda.</p>';
         return;
     }
 
+    // Renderiza as cenas
     cenas.forEach(cena => {
         const cenasElement = createByElem('div');
         cenasElement.className = `cena-item ${!cena.ativa ? 'inativa' : ''}`;
         cenasElement.dataset.cenaId = cena.id;
         const qntAcoes = cena.acoes ? cena.acoes.length : 0;
 
+        // Cria o badge de status
         const statusBadge = cena.ativa ? `<span class="status-badge ativa">Ativa</span>` : `<span class="status-badge inativa">Inativa</span>`;
-        const toggleButtonText = cena.ativa ? 'Desativar' : 'Ativar';
-        const iconeBotaoToggle = cena.ativa ? 'ativo' : 'inativo'
+        const iconeBotaoToggle = cena.ativa ? 'ativo' : 'inativo'; // Define o ícone do botão de ativação/desativação
+        const executarDesativado = !cena.ativa || qntAcoes === 0; // Define se o botão de executar está desativado
 
-        const executarDesativado = !cena.ativa || qntAcoes === 0;
-
+        // Cria o elemento da cena
         cenasElement.innerHTML = `
             <div class="cena-header" style="width:100%; display:flex; justify-content:flex-start; align-items:flex-start; cursor:pointer;">
                 <div class="cena-title">
@@ -72,6 +87,10 @@ export async function renderizarCenas() {
     });
 }
 
+/**
+ * @description Função para lidar com as ações das cenas
+ * @param {Event} event - O evento de clique
+*/
 export async function lidarAcoesDasCenas(event) {
     const target = event.target;
     const cenaItem = target.closest('.cena-item');
@@ -79,15 +98,18 @@ export async function lidarAcoesDasCenas(event) {
 
     const cenaId = cenaItem.dataset.cenaId;
 
+    // Verifica se o clique foi dentro da lista de ações
     if (target.closest('.acoes-container')) {
         return;
     }
 
+    // Verifica se o clique foi no botão de ativação/desativação
     if (target.classList.contains('btn-toggle-ativa')) {
         event.stopPropagation();
 
-        const cenaAtualizada = await invetEstadoCena(cenaId);
-        
+        const cenaAtualizada = await invertEstadoCena(cenaId);
+
+        // Verifica se a cena foi atualizada com sucesso
         if (cenaAtualizada) {
             mostrarNotificacao(`Cena "${cenaAtualizada.nome}" foi ${cenaAtualizada.ativa ? 'ativada' : 'desativada'}.`, 'ativa');
             if (cenaAtualizada) {
@@ -100,69 +122,99 @@ export async function lidarAcoesDasCenas(event) {
         return;
     }
 
+    // Verifica se o clique foi no botão de execução
     if (target.classList.contains('btn-executar-cena')) {
         event.stopPropagation();
 
-        document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+        travarUI(true);
 
         const acoesDaCena = await listarAcoesPorCena(cenaId);
         const tempoTotalSegundos = acoesDaCena.reduce((soma, acao) => soma + (acao.intervalo_segundos || 0), 0);
         const tempoTotalMs = tempoTotalSegundos * 1000;
         const nomeCena = cenaItem.querySelector('.cena-title span').textContent;
 
+
         mostrarNotificacao(`Executando a cena "${nomeCena}"... (Duração: ${tempoTotalSegundos}s)`, 'info', tempoTotalMs);
 
-        const resultado = await executarCena(cenaId);
+        // Executa a cena
+        try {
+            const resultado = await executarCena(cenaId);
 
-        if (resultado.sucesso) {
-            mostrarNotificacao(`Cena executada! ${resultado.dispositivos_afetados.length} dispositivos alterados.`, 'sucesso');
-            await redesenharListaDeComodos();
-        } else {
-            mostrarNotificacao(`Falha ao executar: ${resultado.mensagem}`, 'erro');
+            if (resultado.sucesso) {
+                const acoesDaCena = await listarAcoesPorCena(cenaId);
+                const dispositivosEnvolvidos = new Set(acoesDaCena.map(a => a.dispositivo_id));
+                const totalDispositivosEnvolvidos = dispositivosEnvolvidos.size;
+
+                const totalDispositivosAlterados = resultado.dispositivos_afetados.length;
+
+                mostrarNotificacao(
+                    `Cena executada! ${totalDispositivosAlterados} de ${totalDispositivosEnvolvidos} dispositivos foram alterados.`,
+                    'sucesso'
+                );
+                await redesenharListaDeComodos();
+            } else {
+                mostrarNotificacao(`Falha ao executar: ${resultado.mensagem}`, 'erro');
+            }
+        } catch (error) {
+            console.error("Erro ao executar cena:", error);
+            mostrarNotificacao('Ocorreu um erro inesperado ao executar a cena.', 'erro');
+        } finally {
+            await redesenharListaDeCenas(); // Atualiza a lista de cenas
+            travarUI(false);
         }
 
-        document.querySelectorAll('.btn').forEach(btn => btn.disabled = false);
-        
         return;
     }
 
+    // Verifica se o clique foi dentro da lista de ações
     if (target.closest('.cena-actions')) {
         const cenaId = cenaItem.dataset.cenaId;
+
+        // Excluir cena
         if (target.classList.contains('btn-danger')) {
             const confirmado = await abrirModalConfirmacao('Tem certeza que deseja excluir esta cena? Todos as ações serão perdidas.');
             if (confirmado) lidarExcluirCena(cenaId);
         }
 
+        // Editar cena
         if (target.classList.contains('btn-warning')) {
             ativarModoEdicao(cenaItem);
         }
 
+        // Salvar edição
         if (target.classList.contains('btn-success')) {
             lidarSalvarEdicao(cenaItem, cenaId);
         }
 
+        // Cancelar edição
         if (target.classList.contains('btn-secondary')) {
             redesenharListaDeCenas();
         }
         return;
     }
-    
+
+    // Verifica se o clique foi no cabeçalho da cena
     if (target.closest('.cena-header')) {
         if (cenaItem.classList.contains('inativa')) {
             event.stopPropagation();
-            return; 
+            return;
         }
 
         const cenaId = cenaItem.dataset.cenaId;
         const container = cenaItem.querySelector('.acoes-container');
         const isExpanded = cenaItem.classList.toggle('expanded');
 
+        // Renderiza as ações da cena se estiver expandida
         if (isExpanded && container.innerHTML === '') {
             renderizarAcoes(cenaId, container);
         }
     }
 }
 
+/**
+ * @description Função para lidar com a exclusão de cenas
+ * @param {string} id - O ID da cena a ser excluída
+*/
 async function lidarExcluirCena(id) {
     const sucesso = await excluirCena(id);
 
@@ -174,11 +226,16 @@ async function lidarExcluirCena(id) {
     }
 }
 
+/**
+ * @description Função para ativar o modo de edição de uma cena
+ * @param {HTMLElement} cenaItem - O elemento da cena a ser editado
+*/
 function ativarModoEdicao(cenaItem) {
     const header = cenaItem.querySelector('.cena-header');
     const nomeAtual = header.querySelector('span').textContent;
     header.style.display = 'none';
 
+    // Cria o formulário de edição
     const formEdicao = createByElem('div');
     formEdicao.className = 'form-container';
     formEdicao.style.width = '100%';
@@ -193,15 +250,22 @@ function ativarModoEdicao(cenaItem) {
     formEdicao.querySelector('input').focus();
 }
 
+/**
+ * @description Função para lidar com a salvamento da edição de uma cena
+ * @param {HTMLElement} cenasItem - O elemento da cena a ser editado
+ * @param {string} id - O ID da cena a ser atualizada
+*/
 async function lidarSalvarEdicao(cenasItem, id) {
     const input = cenasItem.querySelector('input');
     const novoNome = input.value.trim();
 
+    // Verifica se o novo nome é válido
     if (!novoNome) {
         mostrarNotificacao('O nome da cena não pode ser vazio.', 'erro');
         return;
     }
 
+    // Atualiza a cena
     const cenaAtualizado = await attCena(id, novoNome);
     if (cenaAtualizado) {
         mostrarNotificacao('Cena atualizada com sucesso!', 'sucesso');
@@ -211,13 +275,19 @@ async function lidarSalvarEdicao(cenasItem, id) {
     }
 }
 
+/**
+ * @description Função para lidar com a adição de uma nova cena
+*/
 export async function lidarAddCena() {
     const nome = novaCenaInput.value.trim();
+
+    // Verifica se o nome é válido
     if (!nome) {
         mostrarNotificacao('Por favor, digite o nome da cena.', 'erro');
         return;
     }
 
+    // Cria a nova cena
     const novaCena = await criarCena(nome);
     if (novaCena) {
         novaCenaInput.value = '';

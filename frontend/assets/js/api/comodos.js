@@ -1,5 +1,13 @@
+/**
+ * Arquivo de manipulação da comunicação com a API voltado para os cômodos
+*/
+
 import { API_URL } from "../utils.js";
 
+/**
+ * @description Função para listar todos os cômodos
+ * @returns {Promise<Array>} - Uma promessa que resolve para a lista de cômodos
+*/
 export async function listarComodos() {
     try {
         const response = await fetch(`${API_URL}/comodos`);
@@ -14,6 +22,11 @@ export async function listarComodos() {
     }
 }
 
+/**
+ * @description Função para criar um novo cômodo
+ * @param {string} nome - O nome do cômodo
+ * @returns {Promise<Object|null>} - Uma promessa que resolve para o cômodo criado ou null em caso de erro
+*/
 export async function criarComodo(nome) {
     try {
         const response = await fetch(`${API_URL}/comodos`, {
@@ -33,6 +46,12 @@ export async function criarComodo(nome) {
     }
 }
 
+/**
+ * @description Função para alterar um cômodo
+ * @param {string} id - O ID do cômodo
+ * @param {string} novoNome - O novo nome do cômodo
+ * @returns {Promise<Object|null>} - Uma promessa que resolve para o cômodo atualizado ou null em caso de erro
+*/
 export async function attComodo(id, novoNome) {
     try {
         const response = await fetch(`${API_URL}/comodos/${id}`, {
@@ -52,6 +71,11 @@ export async function attComodo(id, novoNome) {
     }
 }
 
+/**
+ * @description Função para excluir um cômodo
+ * @param {string} id - O ID do cômodo
+ * @returns {Promise<boolean>} - Uma promessa que resolve para true em caso de sucesso ou false em caso de erro
+*/
 export async function excluirComodo(id) {
     try {
         const response = await fetch(`${API_URL}/comodos/${id}`, {

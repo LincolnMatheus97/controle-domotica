@@ -1,34 +1,46 @@
+/**
+ * Arquivo de manipulação de DOM para interface de usuário para as ações
+*/
+
 import { listarAcoesPorCena, criarAcao, excluirAcao, attAcao } from "../api/acoes.js";
 import { listarComodos } from "../api/comodos.js";
 import { listarTodosDispositivos } from "../api/dispositivos.js";
 import { createByElem, mostrarNotificacao, abrirModalConfirmacao } from "../utils.js";
 import { redesenharListaDeCenas } from "./cenas.js";
 
+/**
+ * @description Função para renderizar as ações de uma cena
+ * @param {string} cenaId - O ID da cena
+ * @param {HTMLElement} container - O contêiner onde as ações serão renderizadas
+ * @returns {Promise<void>}
+*/
 export async function renderizarAcoes(cenaId, container) {
     container.innerHTML = '<p>Carregando Ações...</p>';
 
+    // Carregar as ações, dispositivos e cômodos
     const [acoes, dispositivos, comodos] = await Promise.all([
         listarAcoesPorCena(cenaId),
         listarTodosDispositivos(),
         listarComodos()
     ]);
 
+    // Mapear os cômodos
     const comodosMap = new Map(comodos.map(c => [c.id, c.nome]));
 
     container.innerHTML = '';
 
+    // Verificar se há ações
     if (acoes.length === 0) {
         container.innerHTML = '<p>Nenhuma ação cadastrada nesta cena.</p>';
     } else {
 
-        // ADICIONEI ISSO AQUI
         const titulo = createByElem('h3');
         titulo.textContent = 'Sequência de ações';
         titulo.style.marginBottom = '10px';
         titulo.className = 'titulo-acoes'
         container.appendChild(titulo);
 
-
+        // Renderizar as ações
         acoes.forEach(acao => {
             const dispositivo = dispositivos.find(d => d.id === acao.dispositivo_id);
             const nomeDispositivo = dispositivo ? dispositivo.nome : `ID ${acao.dispositivo_id} (não encontrado)`;
@@ -41,11 +53,11 @@ export async function renderizarAcoes(cenaId, container) {
             acaoEl.className = 'acao-item';
             acaoEl.dataset.acaoId = acao.id;
 
-            // ADICIONEI ISSO AQUI
+            // Criar contêiner para a ação
             const ctnAcao = createByElem('div')
             ctnAcao.className = 'ctn-acao'
 
-            // ALTEREI ISSO AQUI
+            // Adicionar a ação ao contêiner
             acaoEl.innerHTML = `
                 <div class="view-mode">
                     <div class='acao-info'>
@@ -79,17 +91,18 @@ export async function renderizarAcoes(cenaId, container) {
         });
     }
 
+    // Criar formulário para adicionar nova ação
     const formAdicionar = createByElem('div');
     formAdicionar.className = 'form-container-grid';
     formAdicionar.style.marginTop = '15px';
 
+    // Criar lista de opções para dispositivos, que será usada no formulário de adição
     const optionsDispositivosAdicionar = dispositivos.map(d => {
         const comodoNome = comodosMap.get(d.comodo_id) || 'N/A';
         return `<option value="${d.id}">${d.nome} (${comodoNome})</option>`;
     }).join('');
 
-    
-    // ALTEREI ISSO AQUI
+    // Adicionar o formulário ao contêiner
     formAdicionar.innerHTML = `
         <h2>Adicionar ação</h2>
         <span>Número de ordem</span>
@@ -111,6 +124,11 @@ export async function renderizarAcoes(cenaId, container) {
     container.appendChild(formAdicionar);
 }
 
+/**
+ * @description Função para lidar com a adição de uma nova ação, incluindo uma lógica de pilha para ordenar as ações
+ * @param {Event} event - O evento de clique
+ * @returns {Promise<void>}
+*/
 export async function lidarAddAcao(event) {
     event.stopPropagation();
 
@@ -124,6 +142,7 @@ export async function lidarAddAcao(event) {
     const acaoInput = container.querySelector('.nova-acao-acao');
     const intervaloInput = container.querySelector('.nova-acao-intervalo');
 
+    // Validar campos obrigatórios
     if (!ordemInput.value || !dispositivoIdInput.value) {
         mostrarNotificacao('Preencha a ordem e selecione um dispositivo.', 'erro');
         return;
@@ -133,12 +152,14 @@ export async function lidarAddAcao(event) {
     const ordemDesejada = parseInt(ordemInput.value);
     const acaoConflitante = todasAcoes.find(a => a.ordem === ordemDesejada);
 
+    // Verificar se há ações conflitantes
     let ordemParaCriar = ordemDesejada;
     if (acaoConflitante) {
-        const maiorOrdem = Math.max(...todasAcoes.map(a => a.ordem), 0);
-        ordemParaCriar = maiorOrdem + 1;
+        await empilharOrdenacao(cenaId, ordemDesejada,'+');
+        mostrarNotificacao(`Ordem ${ordemDesejada} já existe. As ações foram reordenadas.`, 'info', 4000);
     }
 
+    // Criar nova ação
     const novaAcao = await criarAcao(
         cenaId,
         dispositivoIdInput.value,
@@ -147,20 +168,20 @@ export async function lidarAddAcao(event) {
         ordemParaCriar
     );
 
+    // Verificar se a nova ação foi criada com sucesso
     if (novaAcao) {
-        await trocarOuAtualizarOrdemAcao({
-            cenaId,
-            acaoIdAtual: novaAcao.id,
-            novaOrdem: parseInt(ordemInput.value),
-            dispositivoId: dispositivoIdInput.value,
-            acao: acaoInput.value === 'true',
-            intervalo: intervaloInput.value
-        });
+        mostrarNotificacao('Ação adicionada com sucesso!', 'sucesso');
+        await redesenharListaDeCenas();
     } else {
         mostrarNotificacao('Falha ao adicionar a ação.', 'erro');
     }
 }
 
+/**
+ * @description Função para lidar com as ações das ações (edição, exclusão, etc.)
+ * @param {Event} event - O evento de clique
+ * @returns {Promise<void>}
+*/
 export async function lidarAcoesDasAcoes(event) {
     event.stopPropagation();
 
@@ -175,6 +196,7 @@ export async function lidarAcoesDasAcoes(event) {
     const viewMode = acaoItem.querySelector('.view-mode');
     const editMode = acaoItem.querySelector('.edit-mode');
 
+    // Lógica para exclusão de ação
     if (target.classList.contains('btn-excluir-acao')) {
         const confirmado = await abrirModalConfirmacao("Tem certeza que deseja excluir esta ação?");
         if (confirmado) {
@@ -186,18 +208,25 @@ export async function lidarAcoesDasAcoes(event) {
                 mostrarNotificacao('Falha ao excluir a ação.', 'erro');
             }
         }
+
+    // Lógica para edição de ação
     } else if (target.classList.contains('btn-editar-acao')) {
         viewMode.classList.add('hidden');
         editMode.classList.remove('hidden');
+
+    // Lógica para cancelar edição de ação
     } else if (target.classList.contains('btn-cancelar-edicao-acao')) {
         viewMode.classList.remove('hidden');
         editMode.classList.add('hidden');
+
+    // Lógica para salvar edição de ação
     } else if (target.classList.contains('btn-salvar-acao')) {
         const novaOrdem = parseInt(acaoItem.querySelector('.edit-acao-ordem').value);
         const dispositivoId = acaoItem.querySelector('.edit-acao-dispositivo-id').value;
         const acao = acaoItem.querySelector('.edit-acao-acao').value === 'true';
         const intervalo = acaoItem.querySelector('.edit-acao-intervalo').value;
 
+        // Verifica se a edição da ordem é válida
         await trocarOuAtualizarOrdemAcao({
             cenaId,
             acaoIdAtual,
@@ -209,12 +238,24 @@ export async function lidarAcoesDasAcoes(event) {
     }
 }
 
+/**
+ * @description Função para trocar ou atualizar a ordem de uma ação
+ * @param {Object} param - Os parâmetros da função
+ * @param {string} param.cenaId - O ID da cena
+ * @param {string} param.acaoIdAtual - O ID da ação atual
+ * @param {number} param.novaOrdem - A nova ordem da ação
+ * @param {string} param.dispositivoId - O ID do dispositivo
+ * @param {boolean} param.acao - O valor da ação
+ * @param {number} param.intervalo - O intervalo da ação
+ * @returns {Promise<void>}
+*/
 async function trocarOuAtualizarOrdemAcao({ cenaId, acaoIdAtual, novaOrdem, dispositivoId, acao, intervalo }) {
     const todasAcoes = await listarAcoesPorCena(cenaId);
 
     const acaoAtual = todasAcoes.find(a => a.id == acaoIdAtual);
     const ordemAntiga = acaoAtual ? acaoAtual.ordem : null;
 
+    // Verifica se há ações conflitantes
     if (ordemAntiga !== null && novaOrdem === ordemAntiga) {
         const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
         if (sucesso) mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
@@ -223,28 +264,52 @@ async function trocarOuAtualizarOrdemAcao({ cenaId, acaoIdAtual, novaOrdem, disp
         return;
     }
 
-    const acaoConflitante = todasAcoes.find(a => a.ordem === novaOrdem);
+    mostrarNotificacao(`Ordem ${novaOrdem} já existe. As ações foram reordenadas.`, 'info', 4000);
 
-    if (acaoConflitante) {
-        mostrarNotificacao('Trocando ordem das ações...', 'info');
+    // Reordena as ações se a nova ordem for menor que a antiga
+    if (novaOrdem < ordemAntiga) {
+        await empilharOrdenacao(cenaId, novaOrdem, '+');
 
-        const [sucessoAcaoAtual, sucessoAcaoConflitante] = await Promise.all([
-            attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId),
-            attAcao(acaoConflitante.id, acaoConflitante.acao, acaoConflitante.intervalo_segundos, ordemAntiga, acaoConflitante.dispositivo_id)
-        ]);
+    // Reordena as ações se a nova ordem for maior que a antiga
+    } else if (novaOrdem > ordemAntiga) {
+        await empilharOrdenacao(cenaId, ordemAntiga, '-', novaOrdem);
+    }
 
-        if (sucessoAcaoAtual && sucessoAcaoConflitante) {
-            mostrarNotificacao('Ordem das ações trocada com sucesso!', 'sucesso');
-        } else {
-            mostrarNotificacao('Ocorreu um erro ao trocar a ordem das ações.', 'erro');
-        }
+    const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
+    if (sucesso) {
+        mostrarNotificacao('Ação atualizada e ordens ajustadas!', 'sucesso');
     } else {
-        const sucesso = await attAcao(acaoIdAtual, acao, intervalo, novaOrdem, dispositivoId);
-        if (sucesso) {
-            mostrarNotificacao('Ação atualizada com sucesso!', 'sucesso');
-        } else {
-            mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
-        }
+        mostrarNotificacao('Falha ao atualizar a ação.', 'erro');
     }
     await redesenharListaDeCenas();
+}
+
+/**
+ * @description Função para empilhar a ordenação das ações
+ * @param {string} cenaId - O ID da cena
+ * @param {number} ordemInicial - A ordem inicial das ações
+ * @param {string} sinal - O sinal de empilhamento ('+' ou '-')
+ * @param {number} [ordemfinal] - A ordem final das ações (opcional)
+*/
+async function empilharOrdenacao(cenaId, ordemInicial, sinal, ordemfinal = null) {
+    const todasAcoes = await listarAcoesPorCena(cenaId);
+
+    // Verifica se há ações afetadas
+    if (sinal === '+') {
+        const afetadas = todasAcoes
+            .filter(a => a.ordem >= ordemInicial)
+            .sort((a, b) => b.ordem - a.ordem);
+        for (const acao of afetadas) {
+            await attAcao(acao.id, acao.acao, acao.intervalo_segundos, acao.ordem + 1, acao.dispositivo_id);
+        }
+
+    // Reordena as ações se a nova ordem for maior que a antiga
+    } else if (sinal === '-') {
+        const afetadas = todasAcoes
+            .filter(a => a.ordem > ordemInicial && a.ordem <= ordemfinal)
+            .sort((a, b) => a.ordem - b.ordem);
+        for (const acao of afetadas) {
+            await attAcao(acao.id, acao.acao, acao.intervalo_segundos, acao.ordem - 1, acao.dispositivo_id);
+        }
+    }
 }
