@@ -24,6 +24,7 @@
                     Controle cômodos, personalize cenas e deixe a
                     tecnologia cuidar do seu conforto com apenas um clique.
                 </p>
+                <a href="#sobre-section">Saiba sobre nós</a>
             </div>
 
             <div class="container-links">
@@ -67,7 +68,7 @@
             </div>
         </div>
         <div class="container-animacao">
-            <duv class="bolhas">
+            <div class="bolhas">
                 <span style="--i:11"></span>
                 <span style="--i:17"></span>
                 <span style="--i:25"></span>
@@ -95,7 +96,7 @@
                 <span style="--i:30"></span>
                 <span style="--i:13"></span>
                 <span style="--i:28"></span>
-            </duv>
+            </div>
         </div>
     </header>
 
@@ -132,24 +133,80 @@
             <div class="container-cenas">
                 <h1>Cenas</h1>
                 <p>Clique nas cenas para adicionar dispositivos!</p>
-                <div id="cenas-list">
-
-                </div>
                 <div class="form-container-cenas">
                     <h2>Adicionar cenas</h2>
                     <span>Nome</span>
                     <input type="text" id="nova-cena-nome" placeholder="Nome do nova cena">
                     <button id="btn-add-cena" class="btn btn-primary">Adicionar Cena</button>
                 </div>
-            </div>
-            <a href="#sobre-section" class="btn-seta"><img class="seta" src="./assets/img/seta-para-baixo.png"
-                    alt=""></a>
-        </section>
-        <section class="esconder" id="sobre-section">
-            <a href="#header" class="btn-seta">Voltar ao início
+                <div id="cenas-list">
 
-            </a>
-            <h2>Sobre</h2>
+                </div>
+            </div>
+            <a href="#sobre-section" class="btn-seta"><img class="seta" src="./assets/img/seta-para-baixo.png" alt=""></a>
+        </section>
+        <section id="sobre-section" class="esconder">
+            <div class="apresentacao-sobre-nos">
+                <h2>Sobre Nós</h2>
+                <div class="container-cards">
+                    <div class="box" data-tilt>
+                        <img src="./assets/img/eu.jpg" alt="">
+                        <h4>natyyHy</h4>
+                        <p>Estudante de ADS, apaixonada por tecnologia e desafios, sempre em evolução para criar soluções de impacto.</p>
+                        <div class="link">
+                            <a href="https://github.com/natyyHy"><img src="./assets/img/github.png" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="box" data-tilt>
+                        <img src="./assets/img/jpzao.png" alt="">
+                        <h4>jpaullopes</h4>
+                        <p>Olá! Sou João Paulo 👋 Estudante de ADS, apaixonado por cibersegurança e sistemas embarcados, explorando IoT, redes, Linux, Docker, PostgreSQL e microcontroladores..</p>
+                        <div class="link">
+                            <a href="https://github.com/jpaullopes"><img src="./assets/img/github.png" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="box" data-tilt>
+                        <img src="./assets/img/lilicon.jpg" alt="">
+                        <h4>LincolnMatheus97</h4>
+                        <p>Estudante de ADS no IFPI, residente EmbarcaTech, desenvolvo com sistemas embarcados, gosto de programar, pedalar, jogar e fotografar plantas.</p>
+                        <div class="link">
+                            <a href="https://github.com/LincolnMatheus97"><img src="./assets/img/github.png" alt=""></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-animacao-sobre">
+            <div class="bolhas-sobre">
+                <span style="--i:11"></span>
+                <span style="--i:17"></span>
+                <span style="--i:25"></span>
+                <span style="--i:14"></span>
+                <span style="--i:9"></span>
+                <span style="--i:2"></span>
+                <span style="--i:28"></span>
+                <span style="--i:16"></span>
+                <span style="--i:22"></span>
+                <span style="--i:4"></span>
+                <span style="--i:13"></span>
+                <span style="--i:27"></span>
+                <span style="--i:17"></span>
+                <span style="--i:9"></span>
+                <span style="--i:15"></span>
+                <span style="--i:24"></span>
+                <span style="--i:12"></span>
+                <span style="--i:26"></span>
+                <span style="--i:31"></span>
+                <span style="--i:3"></span>
+                <span style="--i:29"></span>
+                <span style="--i:5"></span>
+                <span style="--i:19"></span>
+                <span style="--i:21"></span>
+                <span style="--i:30"></span>
+                <span style="--i:13"></span>
+                <span style="--i:28"></span>
+            </div>
+        </div>
+        <a href="#header" class="link-sobre">Voltar ao início</a>
         </section>
 
     </main>
@@ -169,6 +226,7 @@
 
     <script type="module" src="assets/js/main.js"></script>
     <script type="module" src="assets/js/script.js"></script>
+    <script type="module" src="./assets/js/vanilla-tilt.js"></script>
 </body>
 
 </html>
