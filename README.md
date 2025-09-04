@@ -14,6 +14,11 @@ Este repositório foi criado para a entrega da atividade "Projeto de Diagnóstic
 
 Nossa autoavaliaçao, demostrando o nível de domínio do grupo em cada uma das áreas a serem verificadas no projeto desenvolvido.
 
+* **Escala de Proficiência:**
+    * `⚪ A Dominar`: Conhecimento básico, precisa de estudo ou auxílio para aplicar
+    * `🟢 Bom Domínio`: Consegue aplicar o conhecimento de forma independente
+    * `🟡 Fluente`: Domina o conhecimento, consegue aplicá-lo com eficiência
+
 | Habilidade Avaliada                                         | Natiele | João Paulo | Lincoln |
 | :---------------------------------------------------------- | :------ | :--------- | :------ |
 |**Engenharia de Software** (Diagramas e Documentação)         |         |            |         |
