@@ -9,6 +9,21 @@ Este repositório foi criado para a entrega da atividade "Projeto de Diagnóstic
  - Natiele Grazielly Ferreira Santana.
 
 ---
+
+## 🗺️ Mapa de habilidades
+
+Nossa autoavaliaçao, demostrando o nível de domínio do grupo em cada uma das áreas a serem verificadas no projeto desenvolvido.
+
+| Habilidade Avaliada                                         | Natiele | João Paulo | Lincoln |
+| :---------------------------------------------------------- | :------ | :--------- | :------ |
+|**Engenharia de Software** (Diagramas e Documentação)         |         |            |         |
+|**Habilidades Técnicas em Backend** (Frameworks e BD)       |         |            |         |
+|**Habilidades Técnicas em Frontend** (APIs e Interface)    |         |            |         |
+|**Capacidade de Organização** (Git, GitHub e Equipe)        |         |            |         |
+
+
+
+---
 # PDF da Atividade
 
 ![Pagina 1 do pdf](https://imgur.com/0po4bBo.png).
